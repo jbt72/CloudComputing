@@ -62,6 +62,41 @@ class ThreadPool:
         num_jobs+= 1
         self.occupied.notify()
 
+# ===================================
+# Commands
+# ===================================
+
+class Commands:
+
+    def __init__(self, socket):
+      self.socket = socket
+      self.options = {'GET': get_handle, 'SET': set_handle}
+
+
+    def command_handle(self, command):
+      c_keyword = command.partition(" ")[0]
+      print("before")
+      if (c_keyword in self.options):
+        print("after")
+        options[c_keyword](command)
+        return True
+      else:
+        print("Unrecognized commands")
+        return False
+
+
+    def get_handle(self, command):
+      self.socket.send(database[command.partition(" ")[2]])
+
+
+    def set_handle(self, command):
+      database[command.split(" ")[1]] = command.split(" ")[2]
+      self.socket.send("OK")
+
+    def del_handle(self, command):
+      print("to be deleted")
+
+
 # handle a single client request
 # Each client is handled by a separate thread
 class ConnectionHandler:
