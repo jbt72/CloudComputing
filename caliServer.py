@@ -72,11 +72,11 @@ class Commands:
     def __init__(self, socket):
         self.socket = socket
         self.options = {'GET': self.get_handle, 'SET': self.set_handle,
-                        'QUIT': self.quit_handle}
+                        'DEL': self.del_handle, 'QUIT': self.quit_handle}
 
 
     def command_handle(self, command):
-        c_keyword = command.partition(" ")[0]
+        c_keyword = command.split(" ")[0]
         print("before")
         if (c_keyword in self.options):
             print("after")
@@ -87,7 +87,7 @@ class Commands:
 
 
     def get_handle(self, command):
-        self.socket.send(database[command.partition(" ")[2]])
+        self.socket.send(database[command.split(" ")[1]] + "\r\n")
         return 0
 
 
@@ -102,7 +102,9 @@ class Commands:
 
 
     def del_handle(self, command):
-        print("to be deleted")
+        for key in command.split(" ")[1:]:
+            del database[key]
+        self.socket.send("+OK\r\n")
         return 0
 
 
