@@ -25,15 +25,18 @@ def sendmsg(msgid, hostname, portnum, sender, receiver):
     # transmit data
     # send() returns actual bytes sent
     print(s.recv(500))
-    print("socket hostname %s\r\n" % socket.gethostname())
+    print("socket hostname %s" % socket.gethostname())
+    print("username: %s password: %s" % (username, password))
     send(s, "%s\r\n" % username)
     send(s, "%s\r\n" % password)
+    print(s.recv(500))
     # identity has been validated
-    send(s, "GET %s\r\n" % "mykey")
-    print(s.recv(500))
-    send(s, "SET %s %s\r\n" % ("mykey", "Hello"))
-    print(s.recv(500))
-
+    # send(s, "GET %s\r\n" % "mykey")
+    # print(s.recv(500))
+    # send(s, "SET %s %s\r\n" % ("mykey", "Hello"))
+    # print(s.recv(500))
+    print("QUIT")
+    send(s, "QUIT\r\n")
     print(s.recv(500))
 
 sendmsg(1, host, port, fromaddr, toaddr)

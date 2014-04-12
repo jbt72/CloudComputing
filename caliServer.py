@@ -17,28 +17,29 @@ port = 8765
 
 class Worker(Thread):
     def __init__(self, ll, lock, condition):
-      Thread.__init__(self)
-      self.daemon = True
-      self.jobs = ll
-      self.ll_lock = lock
-      self.occupied = condition
-      
-    def run(self):
-      global num_jobs
-      global num_conn_lock
-      global num_connections
-      while True:
-        # grab work from queue syncrohnized
-        with self.ll_lock:
-            while not (num_jobs > 0):
-              self.occupied.wait()
-            num_jobs-= 1
-            self.work = self.jobs.popleft()
+        Thread.__init__(self)
+        self.daemon = True
+        self.jobs = ll
+        self.ll_lock = lock
+        self.occupied = condition
 
-        # Do work
-        self.work.handle()
-        with num_conn_lock:
-          num_connections-= 1
+    def run(self):
+        global num_jobs
+        global num_conn_lock
+        global num_connections
+        while True:
+            # grab work from queue syncrohnized
+            with self.ll_lock:
+                while not (num_jobs > 0):
+                    self.occupied.wait()
+                num_jobs -= 1
+                self.work = self.jobs.popleft()
+
+            # Do work
+            self.work.handle()
+            with num_conn_lock:
+                num_connections -= 1
+
 
 # ===================================
 # ThreadPool
@@ -47,55 +48,67 @@ class Worker(Thread):
 class ThreadPool:
     # spawn a pool of daemon threads & pass them an instance of the queue
     def __init__(self, num_threads):
-      self.jobs = deque([])
-      self.lock = Lock()
-      self.occupied = Condition(self.lock)
-      for i in range(num_threads):
-        t = Worker(self.jobs, self.lock, self.occupied)
-        t.start()
+        self.jobs = deque([])
+        self.lock = Lock()
+        self.occupied = Condition(self.lock)
+        for i in range(num_threads):
+            t = Worker(self.jobs, self.lock, self.occupied)
+            t.start()
 
     # add a job to the queue, in this case connections
     def add_job(self, socket):
-      global num_jobs
-      with self.lock:
-        self.jobs.append(socket)
-        num_jobs+= 1
-        self.occupied.notify()
+        global num_jobs
+        with self.lock:
+            self.jobs.append(socket)
+            num_jobs += 1
+            self.occupied.notify()
+
 
 # ===================================
 # Commands
 # ===================================
 
 class Commands:
-
     def __init__(self, socket):
-      self.socket = socket
-      self.options = {'GET': get_handle, 'SET': set_handle}
+        self.socket = socket
+        self.options = {'GET': self.get_handle, 'SET': self.set_handle,
+                        'QUIT': self.quit_handle}
 
 
     def command_handle(self, command):
-      c_keyword = command.partition(" ")[0]
-      print("before")
-      if (c_keyword in self.options):
-        print("after")
-        options[c_keyword](command)
-        return True
-      else:
-        print("Unrecognized commands")
-        return False
+        c_keyword = command.partition(" ")[0]
+        print("before")
+        if (c_keyword in self.options):
+            print("after")
+            return self.options[c_keyword](command)
+        else:
+            print("Unrecognized commands")
+            return -1
 
 
     def get_handle(self, command):
-      self.socket.send(database[command.partition(" ")[2]])
+        self.socket.send(database[command.partition(" ")[2]])
+        return 0
 
 
     def set_handle(self, command):
-      database[command.split(" ")[1]] = command.split(" ")[2]
-      self.socket.send("OK")
+        database[command.split(" ")[1]] = command.split(" ")[2]
+        self.socket.send("+OK\r\n")
+        return 0
+
+    def quit_handle(self, command):
+        self.socket.send("+OK\r\n")
+        return 1
+
 
     def del_handle(self, command):
-      print("to be deleted")
+        print("to be deleted")
+        return 0
 
+
+# ===================================
+# Connection Handler
+# ===================================
 
 # handle a single client request
 # Each client is handled by a separate thread
@@ -104,94 +117,81 @@ class ConnectionHandler:
         self.socket = socket
         self.complete = False
         self.clienthostname = ""
-        self.timeout = Timer(10.0, self.handle_timeout)
+        self.timeout = Timer(3.0, self.handle_timeout)
         self.valid_client = False
         self.unprocessed_packets = ""
         self.command = ""
 
     def handle_timeout(self):
-      print("Timeout")
-      self.socket.send("South Korea Server Error: timeout exceeded")
-      self.socket.close()
-      self.complete = True
-          
+        if (self.complete == False):
+            self.socket.send("South Korea Server Error: timeout exceeded")
+        self.socket.close()
+        self.complete = True
+
     def reset_timer(self):
-      self.timeout = Timer(3.0, self.handle_timeout)
-      self.timeout.start()
-    
+        self.timeout = Timer(3.0, self.handle_timeout)
+        self.timeout.start()
+
     def collect_input(self):
-      self.partitioner = "\r\n"
-      print ("Before loop: unprocessed packets %s" % self.unprocessed_packets)
-      while (self.unprocessed_packets.partition(self.partitioner)[1] == ""):
-        self.unprocessed_packets+= self.socket.recv(500)
-        #print ("In loop: unprocessed packets %s" % self.unprocessed_packets)
-      self.command = self.unprocessed_packets.partition(self.partitioner)[0]
-      print("new command %s" % self.command)
-      self.unprocessed_packets = self.unprocessed_packets.partition(self.partitioner)[2]
-      print("new unprocessed packets %s" % self.unprocessed_packets)
-    
-    
+        self.partitioner = "\r\n"
+        print ("Before loop: unprocessed packets %s" % self.unprocessed_packets)
+        while (self.unprocessed_packets.partition(self.partitioner)[1] == ""):
+            self.unprocessed_packets += self.socket.recv(500)
+            #print ("In loop: unprocessed packets %s" % self.unprocessed_packets)
+        self.command = self.unprocessed_packets.partition(self.partitioner)[0]
+        print("new command %s" % self.command)
+        self.unprocessed_packets = self.unprocessed_packets.partition(self.partitioner)[2]
+        print("new unprocessed packets %s" % self.unprocessed_packets)
+
+
     # checks for valid client
-    # TODO: Checks username and password
-    def validation_handle(self):
-      while (not self.valid_client):
-        # check if valid_client appears on list
-        self.collect_input()
-        username = self.command
-        if (self.command in valid_clients):
-          self.collect_input()
-          if (valid_clients[username] == self.command):
-            self.valid_client = True
-            self.timeout.cancel()
-            self.reset_timer()
-          else:
-            print("Error 1.2 Invalid password")
-        else:
-          print("Error 1.1 Username does not exist")
-
-    def get_handle(self):
-      self.socket.send(database[self.command.partition(" ")[2]])
-      print("successfully read")
-
-
-    def set_handle(self):
-      database[self.command.split(" ")[1]] = self.command.split(" ")[2]
-      self.socket.send("OK")
-      print("successfully wrote")
+    def authentication_handle(self):
+        while (not self.valid_client):
+            # check if valid_client appears on list
+            self.collect_input()
+            username = self.command
+            if (self.command in valid_clients):
+                self.collect_input()
+                if (valid_clients[username] == self.command):
+                    self.valid_client = True
+                    self.timeout.cancel()
+                    self.reset_timer()
+                    self.socket.send("+OK\r\n")
+                else:
+                    self.socket.send("-Error 1.2 Invalid password\r\n")
+            else:
+                self.socket.send("-Error 1.1 Username does not exist\r\n")
 
 
     def handle(self):
-      try:
-        self.socket.send("South Korea Server")
-        self.timeout.start()
-        self.validation_handle()
-        print("Validation Complete")
-        while (not self.complete):
-          #do contains in first 5 letters w/ trimming on white space
-          # change read to be a number command like 0
-          self.collect_input()
-          if (self.command.partition(" ")[0] == 'GET'):
-            self.get_handle()
-            self.reset_timer()
-          if (self.command.partition(" ")[0] == 'SET'):
-            self.set_handle()
-            self.reset_timer()
-            # send success message to client
-      except:
-        self.handle_timeout
-        return
+        try:
+            self.socket.send("South Korea Server")
+            self.timeout.start()
+            self.authentication_handle()
+            c = Commands(self.socket)
+            while (not self.complete):
+                self.collect_input()
+                request = c.command_handle(self.command)
+                if (request == 0):
+                    self.reset_timer()
+                if (request == 1): # quiting
+                    self.complete = True
+        except:
+            self.handle_timeout
+            return
 
 
-
+# ===================================
+# Main Server Loop
+# ===================================
 
 # the main server loop
 def serverloop():
-
     # initialize ThreadPool
     thread_pool = ThreadPool(max_workers)
-    
+
     global num_conn_lock
-    global num_connections 
+    global num_connections
 
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # mark the socket so we can rebind quickly to this port number
@@ -209,11 +209,11 @@ def serverloop():
         # address = [host, port]
         # TODO: block if more than 32
         with num_conn_lock:
-          if (num_connections < 32):
-            (clientsocket, address) = serversocket.accept()
-            ct = ConnectionHandler(clientsocket)
-            thread_pool.add_job(ct)
-            num_connections+= 1
+            if (num_connections < 1):
+                (clientsocket, address) = serversocket.accept()
+                ct = ConnectionHandler(clientsocket)
+                thread_pool.add_job(ct)
+                num_connections += 1
 
 # ===================================
 # main
@@ -238,7 +238,6 @@ database = {"mykey": "Hello"}
 
 num_conn_lock = Lock()
 num_connections = 0
-
 
 print("Server coming up on %s:%i" % (host, port))
 serverloop()
