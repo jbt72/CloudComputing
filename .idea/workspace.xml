@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5f01dae9-f42c-4d05-a479-8d913eea2771" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/caliServerReplica.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/load_balancer.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/caliServer.py" afterPath="$PROJECT_DIR$/caliServer.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client1.py" afterPath="$PROJECT_DIR$/client1.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/load_balancer.py" afterPath="$PROJECT_DIR$/load_balancer.py" />
     </list>
     <ignored path="CloudComputing.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,10 +25,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="caliServer.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="caliServer.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/caliServer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="131" column="20" selection-start="0" selection-end="7840" vertical-scroll-proportion="0.0" vertical-offset="3312" max-vertical-offset="3975">
+            <state line="131" column="20" selection-start="0" selection-end="7840" vertical-scroll-proportion="-2.0316741" vertical-offset="3312" max-vertical-offset="3975">
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -60,10 +56,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="load_balancer.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="load_balancer.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/load_balancer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="210" column="50" selection-start="6360" selection-end="6360" vertical-scroll-proportion="0.6606335" vertical-offset="2712" max-vertical-offset="3375">
+            <state line="85" column="20" selection-start="2193" selection-end="2193" vertical-scroll-proportion="-5.8461537" vertical-offset="1123" max-vertical-offset="3540">
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -401,18 +397,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/caliServer.py">
+    <entry file="file://$PROJECT_DIR$/load_balancer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="131" column="20" selection-start="0" selection-end="7840" vertical-scroll-proportion="0.0" vertical-offset="1872" max-vertical-offset="3975">
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/caliServerReplica.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="11" selection-start="195" selection-end="199" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3975">
+        <state line="85" column="20" selection-start="2193" selection-end="2193" vertical-scroll-proportion="-5.8461537" vertical-offset="1123" max-vertical-offset="3540">
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
@@ -426,9 +413,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/load_balancer.py">
+    <entry file="file://$PROJECT_DIR$/caliServerReplica.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="210" column="50" selection-start="6360" selection-end="6360" vertical-scroll-proportion="0.6606335" vertical-offset="2712" max-vertical-offset="3375">
+        <state line="10" column="11" selection-start="195" selection-end="199" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3975">
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/caliServer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="131" column="20" selection-start="0" selection-end="7840" vertical-scroll-proportion="-2.0316741" vertical-offset="3312" max-vertical-offset="3975">
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>

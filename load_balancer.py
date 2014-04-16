@@ -10,7 +10,8 @@ from collections import deque
 
 host = "127.0.0.1"
 port = 8765
-type = 0 #0: random 1: round-robbin 2: least_connections 3: least connections round-robbin
+type = 1 #0: random 1: round-robbin 2: least_connections 3: least connections round-robbin
+counter = 0
 
 
 # ===================================
@@ -74,6 +75,7 @@ class Commands:
     def __init__(self, socket):
         self.socket = socket
         self.options = {'CONNECT': self.connect_handle}
+        self.pick = 0
 
 
     def command_handle(self, command):
@@ -89,10 +91,20 @@ class Commands:
 
 
     def connect_handle(self, command):
+        global counter
         print("in conn")
-        if (type == 0):
-            i = random.randint(0, len(servers) - 1)
-        self.socket.send(servers[i][0] + " " + str(servers[i][1]) + " \r\n")
+        if (type == 0): #random
+            self.pick = random.randint(0, len(servers) - 1)
+        if (type == 1): #round-robbin
+            if (counter >= len(servers)):
+                counter = 0
+            self.pick = counter
+            counter += 1
+            print("in rr")
+            print(self.pick)
+            print("coutner")
+            print(counter)
+        self.socket.send(servers[self.pick][0] + " " + str(servers[self.pick][1]) + " \r\n")
         print("was sent")
         return 0
 
@@ -145,7 +157,6 @@ class ConnectionHandler:
                 self.collect_input()
                 print(self.command)
                 request = c.command_handle(self.command)
-                print("hi")
                 if (request == 0):
                     self.reset_timer()
                     self.complete = True
