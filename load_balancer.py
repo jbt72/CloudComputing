@@ -1,6 +1,7 @@
 import getopt
 import socket
 import sys
+import random
 from Queue import Queue
 from threading import Thread, Timer, Lock, Condition
 import time
@@ -8,7 +9,8 @@ import re
 from collections import deque
 
 host = "127.0.0.1"
-port = 8766
+port = 8765
+type = 0 #0: random 1: round-robbin 2: least_connections 3: least connections round-robbin
 
 
 # ===================================
@@ -71,47 +73,29 @@ class ThreadPool:
 class Commands:
     def __init__(self, socket):
         self.socket = socket
-        self.options = {'GET': self.get_handle, 'SET': self.set_handle,
-                        'DEL': self.del_handle, 'PING': self.ping_handle,
-                        'QUIT': self.quit_handle}
+        self.options = {'CONNECT': self.connect_handle}
 
 
     def command_handle(self, command):
+        print(command)
         c_keyword = command.split(" ")[0]
-        print("before")
+        print(c_keyword)
+        print("yup")
         if (c_keyword in self.options):
-            print("after")
             return self.options[c_keyword](command)
         else:
             print("Unrecognized commands")
             return -1
 
 
-    def get_handle(self, command):
-        self.socket.send(database[command.split(" ")[1]] + "\r\n")
+    def connect_handle(self, command):
+        print("in conn")
+        if (type == 0):
+            i = random.randint(0, len(servers) - 1)
+        self.socket.send(servers[i][0] + " " + str(servers[i][1]) + " \r\n")
+        print("was sent")
         return 0
 
-
-    def set_handle(self, command):
-        database[command.split(" ")[1]] = command.split(" ")[2]
-        self.socket.send("+OK\r\n")
-        return 0
-
-    def quit_handle(self, command):
-        self.socket.send("+OK\r\n")
-        return 1
-
-
-    def del_handle(self, command):
-        for key in command.split(" ")[1:]:
-            del database[key]
-        self.socket.send("+OK\r\n")
-        return 0
-
-    # PING the server
-    def ping_handle(self, command):
-        self.socket.send("PONG\r\n")
-        return 0
 
 
 # ===================================
@@ -129,12 +113,6 @@ class ConnectionHandler:
         self.valid_client = False
         self.unprocessed_packets = ""
         self.command = ""
-        self.slaves_sockets = []
-        # for (hostname, portnum) in slaves:
-        #     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        #     s.connect((hostname, portnum))
-        #     self.slaves_sockets.append(s)
-
 
     def handle_timeout(self):
         if (self.complete == False):
@@ -158,37 +136,18 @@ class ConnectionHandler:
         print("new unprocessed packets %s" % self.unprocessed_packets)
 
 
-    # checks for valid client
-    def authentication_handle(self):
-        while (not self.valid_client):
-            # check if valid_client appears on list
-            self.collect_input()
-            username = self.command
-            if (self.command in valid_clients):
-                self.collect_input()
-                if (valid_clients[username] == self.command):
-                    self.valid_client = True
-                    self.timeout.cancel()
-                    self.reset_timer()
-                    self.socket.send("+OK\r\n")
-                else:
-                    self.socket.send("-Error 1.2 Invalid password\r\n")
-            else:
-                self.socket.send("-Error 1.1 Username does not exist\r\n")
-
-
     def handle(self):
         try:
-            self.socket.send("South Korea Server")
+            self.socket.send("Asia Load Balancer")
             self.timeout.start()
-            self.authentication_handle()
             c = Commands(self.socket)
             while (not self.complete):
                 self.collect_input()
+                print(self.command)
                 request = c.command_handle(self.command)
+                print("hi")
                 if (request == 0):
                     self.reset_timer()
-                if (request == 1): # quiting
                     self.complete = True
         except:
             self.handle_timeout
@@ -249,7 +208,7 @@ num_jobs = 0
 netID = "jbt72"
 valid_clients = {'Johanni27': '1234'}
 database = {"mykey": "Hello"}
-slaves = {("127.0.0.2", 8766)}
+servers = [("127.0.0.1", 8766), ("127.0.0.1", 8767)]
 
 
 num_conn_lock = Lock()
@@ -257,3 +216,4 @@ num_connections = 0
 
 print("Server coming up on %s:%i" % (host, port))
 serverloop()
+__author__ = 'johanni27'
