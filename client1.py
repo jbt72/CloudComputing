@@ -65,4 +65,5 @@ def sendmsg(msgid, hostname, portnum, sender, receiver):
 
 # connect to load balancer and get a hostname and portnum for server
 (hostname_s, portnum_s) = setup_connection(host, port)
+print("Connection with hostname %s and port %s" % (hostname_s, portnum_s))
 sendmsg(1, hostname_s, portnum_s, fromaddr, toaddr)

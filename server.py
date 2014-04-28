@@ -1,19 +1,15 @@
+__author__ = 'johanni27'
+
 import getopt
 import socket
 import sys
-import random
-import server
 from Queue import Queue
 from threading import Thread, Timer, Lock, Condition
 import time
 import re
 from collections import deque
-import os
 
-host = "127.0.0.1"
-port = 8765
-type = 1 #0: random 1: round-robbin 2: least_connections 3: least connections round-robbin
-counter = 0
+
 
 
 # ===================================
@@ -76,40 +72,47 @@ class ThreadPool:
 class Commands:
     def __init__(self, socket):
         self.socket = socket
-        self.options = {'CONNECT': self.connect_handle}
-        self.pick = 0
+        self.options = {'GET': self.get_handle, 'SET': self.set_handle,
+                        'DEL': self.del_handle, 'PING': self.ping_handle,
+                        'QUIT': self.quit_handle}
 
 
     def command_handle(self, command):
-        print(command)
         c_keyword = command.split(" ")[0]
-        print(c_keyword)
-        print("yup")
+        print("before")
         if (c_keyword in self.options):
+            print("after")
             return self.options[c_keyword](command)
         else:
             print("Unrecognized commands")
             return -1
 
 
-    def connect_handle(self, command):
-        global counter
-        print("in conn")
-        if (type == 0): #random
-            self.pick = random.randint(0, len(servers) - 1)
-        if (type == 1): #round-robbin
-            if (counter >= len(servers)):
-                counter = 0
-            self.pick = counter
-            counter += 1
-            print("in rr")
-            print(self.pick)
-            print("coutner")
-            print(counter)
-        self.socket.send(servers[self.pick][0] + " " + str(servers[self.pick][1]) + " \r\n")
-        print("was sent")
+    def get_handle(self, command):
+        self.socket.send(database[command.split(" ")[1]] + "\r\n")
         return 0
 
+
+    def set_handle(self, command):
+        database[command.split(" ")[1]] = command.split(" ")[2]
+        self.socket.send("+OK\r\n")
+        return 0
+
+    def quit_handle(self, command):
+        self.socket.send("+OK\r\n")
+        return 1
+
+
+    def del_handle(self, command):
+        for key in command.split(" ")[1:]:
+            del database[key]
+        self.socket.send("+OK\r\n")
+        return 0
+
+    # PING the server
+    def ping_handle(self, command):
+        self.socket.send("PONG\r\n")
+        return 0
 
 
 # ===================================
@@ -127,6 +130,12 @@ class ConnectionHandler:
         self.valid_client = False
         self.unprocessed_packets = ""
         self.command = ""
+        self.slaves_sockets = []
+        # for (hostname, portnum) in slaves:
+        #     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #     s.connect((hostname, portnum))
+        #     self.slaves_sockets.append(s)
+
 
     def handle_timeout(self):
         if (self.complete == False):
@@ -150,17 +159,37 @@ class ConnectionHandler:
         print("new unprocessed packets %s" % self.unprocessed_packets)
 
 
+    # checks for valid client
+    def authentication_handle(self):
+        while (not self.valid_client):
+            # check if valid_client appears on list
+            self.collect_input()
+            username = self.command
+            if (self.command in valid_clients):
+                self.collect_input()
+                if (valid_clients[username] == self.command):
+                    self.valid_client = True
+                    self.timeout.cancel()
+                    self.reset_timer()
+                    self.socket.send("+OK\r\n")
+                else:
+                    self.socket.send("-Error 1.2 Invalid password\r\n")
+            else:
+                self.socket.send("-Error 1.1 Username does not exist\r\n")
+
+
     def handle(self):
         try:
-            self.socket.send("Asia Load Balancer")
+            self.socket.send("South Korea Server")
             self.timeout.start()
+            self.authentication_handle()
             c = Commands(self.socket)
             while (not self.complete):
                 self.collect_input()
-                print(self.command)
                 request = c.command_handle(self.command)
                 if (request == 0):
                     self.reset_timer()
+                if (request == 1): # quiting
                     self.complete = True
         except:
             self.handle_timeout
@@ -184,11 +213,12 @@ def serverloop():
     # after the socket is closed
     serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     # bind the socket to the local loopback IP address and special port
+    print("serverloop in server host %s and port %s" % (host, port))
     serversocket.bind((host, port))
     # start listening with a backlog of 5 connections
     # backlog is # of pending connections to allow
     serversocket.listen(5)
-
+    print("success")
 
     while True:
         # accept a connection
@@ -201,22 +231,6 @@ def serverloop():
                 ct = ConnectionHandler(clientsocket)
                 thread_pool.add_job(ct)
                 num_connections += 1
-
-def child_server(info):
-    (hostname, portnum) = info
-    print("before server")
-    s = server.Server(hostname, portnum)
-    print("after server")
-    # add to some list of servers
-
-
-def start_servers():
-    for server in servers:
-        newpid = os.fork()
-        if newpid == 0:
-            child_server(server)
-        else:
-            print('Hello from parent', os.getpid(), newpid)
 
 # ===================================
 # main
@@ -238,18 +252,20 @@ num_jobs = 0
 netID = "jbt72"
 valid_clients = {'Johanni27': '1234'}
 database = {"mykey": "Hello"}
-servers = [ ("127.0.0.1", 8769) ]#, ("127.0.0.8", 8767)]
+slaves = {("127.0.0.2", 8766)}
 
 
 num_conn_lock = Lock()
 num_connections = 0
-
-print("Gateway Server coming up on %s:%i" % (host, port))
-
-
-# Create & start the servers
-start_servers()
+host = "00000"
+port = 0000
 
 
-serverloop()
-__author__ = 'johanni27'
+class Server:
+    def __init__(self, hostname, port_num):
+        global host
+        host = hostname
+        global port
+        port = port_num
+        print("Server coming up on %s:%i" % (host, port))
+        serverloop()
