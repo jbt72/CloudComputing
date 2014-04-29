@@ -10,6 +10,7 @@ import re
 from collections import deque
 import os
 
+
 host = "127.0.0.1"
 port = 8765
 type = 1 #0: random 1: round-robbin 2: least_connections 3: least connections round-robbin
@@ -204,10 +205,8 @@ def serverloop():
 
 def child_server(info):
     (hostname, portnum) = info
-    print("before server")
     s = server.Server(hostname, portnum)
-    print("after server")
-    # add to some list of servers
+    servers_sockets.append(s)
 
 
 def start_servers():
@@ -215,8 +214,8 @@ def start_servers():
         newpid = os.fork()
         if newpid == 0:
             child_server(server)
-        else:
-            print('Hello from parent', os.getpid(), newpid)
+
+
 
 # ===================================
 # main
@@ -238,13 +237,16 @@ num_jobs = 0
 netID = "jbt72"
 valid_clients = {'Johanni27': '1234'}
 database = {"mykey": "Hello"}
-servers = [ ("127.0.0.1", 8769) ]#, ("127.0.0.8", 8767)]
+servers = [ ("127.0.0.1", 8769), ("127.0.0.1", 8770)]
+servers_sockets = []
 
 
 num_conn_lock = Lock()
 num_connections = 0
 
 print("Gateway Server coming up on %s:%i" % (host, port))
+
+
 
 
 # Create & start the servers

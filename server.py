@@ -8,7 +8,8 @@ from threading import Thread, Timer, Lock, Condition
 import time
 import re
 from collections import deque
-
+import pymongo
+from pymongo import MongoClient
 
 
 
@@ -165,9 +166,9 @@ class ConnectionHandler:
             # check if valid_client appears on list
             self.collect_input()
             username = self.command
-            if (self.command in valid_clients):
+            if (db.users.find_one({"name": self.command})):
                 self.collect_input()
-                if (valid_clients[username] == self.command):
+                if (db.users.find_one({"name": username, "password": self.command})):
                     self.valid_client = True
                     self.timeout.cancel()
                     self.reset_timer()
@@ -250,7 +251,6 @@ for k, v in opts:
 max_workers = 32
 num_jobs = 0
 netID = "jbt72"
-valid_clients = {'Johanni27': '1234'}
 database = {"mykey": "Hello"}
 slaves = {("127.0.0.2", 8766)}
 
@@ -261,6 +261,12 @@ host = "00000"
 port = 0000
 
 
+def connect_db():
+    global db
+    client = MongoClient('mongodb://Johanni27:1234@ds047207.mongolab.com:47207/motherland')
+    db = client.motherland
+
+
 class Server:
     def __init__(self, hostname, port_num):
         global host
@@ -268,4 +274,6 @@ class Server:
         global port
         port = port_num
         print("Server coming up on %s:%i" % (host, port))
+        # Connect to DB
+        connect_db()
         serverloop()
