@@ -53,8 +53,8 @@ def sendmsg(msgid, hostname, portnum, sender, receiver):
     send(s, "CREATE PHOTO \talbum1\tI love \\t Grapes!!!\tgrapes.png\t450 \t 320\r\n")
     print(s.recv(500))
 
-    print("DEL PHOTO \tI love \\t Grapes!!!")
-    send(s, "DEL PHOTO \tI love \\t Grapes!!!\r\n")
+    print("DEL PHOTO \talbum1\tI love \\t Grapes!!!")
+    send(s, "DEL PHOTO \talbum1\tI love \\t Grapes!!!\r\n")
     print(s.recv(500))
 
     print("DEL ALBUM \t%s" % "album1")

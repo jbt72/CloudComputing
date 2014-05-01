@@ -117,8 +117,14 @@ class Commands:
         return 0
 
     def del_photo_handle(self, command):
-        name = " ".join(command.split("\t")[1:])
-        db.photos.remove( {"title": name} )
+        photo_name = " ".join(command.split("\t")[2:])
+        album_name = command.split("\t")[1]
+        print("photoname %s yup" % photo_name)
+
+        photo_id = db.photos.find_one({"title": photo_name})["_id"]
+        print("photo id %s yup" % photo_id)
+        db.photos.remove( {"title": photo_name} )
+        db.albums.update( {"title": album_name}, {"$pull": {"images": photo_id}} )
         self.socket.send("+OK\r\n")
         return 0
 
