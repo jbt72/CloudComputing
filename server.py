@@ -8,6 +8,7 @@ from threading import Thread, Timer, Lock, Condition
 import time
 import re
 from collections import deque
+import datetime
 import pymongo
 from pymongo import MongoClient
 
@@ -73,21 +74,53 @@ class ThreadPool:
 class Commands:
     def __init__(self, socket):
         self.socket = socket
-        self.options = {'GET': self.get_handle, 'SET': self.set_handle,
-                        'DEL': self.del_handle, 'PING': self.ping_handle,
+        self.options = {'CREATE ALBUM': self.create_album_handle,
+                        'CREATE PHOTO': self.create_photo_handle,
+                        'DEL ALBUM': self.del_album_handle,
+                        'DEL PHOTO': self.del_photo_handle,
+                        'PING': self.ping_handle,
                         'QUIT': self.quit_handle}
 
 
     def command_handle(self, command):
-        c_keyword = command.split(" ")[0]
-        print("before")
+        c_keyword = " ".join(command.split(" ")[0:2])
         if (c_keyword in self.options):
-            print("after")
             return self.options[c_keyword](command)
         else:
             print("Unrecognized commands")
             return -1
 
+    def create_album_handle(self, command):
+        name = command.split(" ")[2]
+        album = {"title": name, "creation_date": datetime.datetime.utcnow(),
+                 "modify_date": datetime.datetime.utcnow(), "images": []}
+        db.albums.save(album)
+        self.socket.send("+OK\r\n")
+        return 0
+
+    def create_photo_handle(self, command):
+        attr = command.split("\t")
+        photo = {"title": attr[2], "creation_date": datetime.datetime.utcnow(),
+                 "modify_date": datetime.datetime.utcnow(), "filename": attr[3],
+                 "width": attr[4], "height": attr[5], "images": []}
+        db.photos.save(photo)
+        db.albums.update( {"title": attr[1]}, {"$addToSet": {"images": photo["_id"]}} )
+        db.albums.update( {"title": attr[1]}, {"$set": {"modify_date": datetime.datetime.utcnow()}} )
+        self.socket.send("+OK\r\n")
+        return 0
+
+
+    def del_album_handle(self, command):
+        name = " ".join(command.split("\t")[1:])
+        db.albums.remove( {"title": name} )
+        self.socket.send("+OK\r\n")
+        return 0
+
+    def del_photo_handle(self, command):
+        name = " ".join(command.split("\t")[1:])
+        db.photos.remove( {"title": name} )
+        self.socket.send("+OK\r\n")
+        return 0
 
     def get_handle(self, command):
         self.socket.send(database[command.split(" ")[1]] + "\r\n")

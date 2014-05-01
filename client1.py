@@ -43,23 +43,26 @@ def sendmsg(msgid, hostname, portnum, sender, receiver):
     send(s, "%s\r\n" % password)
     print(s.recv(500))
     # identity has been validated
-    print("GET %s" % "mykey")
-    send(s, "GET %s\r\n" % "mykey")
+
+
+    print("CREATE ALBUM %s" % "album1")
+    send(s, "CREATE ALBUM %s\r\n" % "album1")
     print(s.recv(500))
-    print("SET %s %s" % ("mykey1", "Hello1"))
-    send(s, "SET %s %s\r\n" % ("mykey1", "Hello1"))
+
+    print("CREATE PHOTO \talbum1\tI love \\t Grapes!!!\tgrapes.png\t450 \t 320")
+    send(s, "CREATE PHOTO \talbum1\tI love \\t Grapes!!!\tgrapes.png\t450 \t 320\r\n")
     print(s.recv(500))
-    print("SET %s %s" % ("mykey2", "Hello2"))
-    send(s, "SET %s %s\r\n" % ("mykey2", "Hello2"))
+
+    print("DEL PHOTO \tI love \\t Grapes!!!")
+    send(s, "DEL PHOTO \tI love \\t Grapes!!!\r\n")
     print(s.recv(500))
-    print("SET %s %s" % ("mykey3", "Hello3"))
-    send(s, "SET %s %s\r\n" % ("mykey3", "Hello3"))
+
+    print("DEL ALBUM \t%s" % "album1")
+    send(s, "DEL ALBUM \t%s\r\n" % "album1")
     print(s.recv(500))
-    print("DEL %s %s %s" % ("mykey1", "mykey2", "mykey3"))
-    send(s, "DEL %s %s %s\r\n" % ("mykey1", "mykey2", "mykey3"))
-    print(s.recv(500))
-    f = open("images_client1/graph.png", "rb")
-    l = f.read()
+
+    #f = open("images_client1/graph.png", "rb")
+    #l = f.read()
     #send(s, )
     #send(s, file)
     #send(s, "\r\n")
