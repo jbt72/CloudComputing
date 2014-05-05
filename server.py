@@ -78,13 +78,17 @@ class Commands:
                         'CREATE PHOTO': self.create_photo_handle,
                         'DEL ALBUM': self.del_album_handle,
                         'DEL PHOTO': self.del_photo_handle,
+                        'SET ALBUM': self.set_album_handle,
+                        'SET PHOTO': self.set_photo_handle,
                         'PING': self.ping_handle,
                         'QUIT': self.quit_handle}
 
 
     def command_handle(self, command):
         c_keyword = " ".join(command.split(" ")[0:2])
+        print("command %s" %  c_keyword)
         if (c_keyword in self.options):
+            print("before call")
             return self.options[c_keyword](command)
         else:
             print("Unrecognized commands")
@@ -95,17 +99,27 @@ class Commands:
         album = {"title": name, "creation_date": datetime.datetime.utcnow(),
                  "modify_date": datetime.datetime.utcnow(), "images": []}
         db.albums.save(album)
+        db.users.update( {"name": username},
+                         {"$addToSet": {"albums": album["_id"]} } )
+        db.users.update( {"name": username}, {"$set": {"modify_date": datetime.datetime.utcnow()}})
         self.socket.send("+OK\r\n")
         return 0
 
     def create_photo_handle(self, command):
         attr = command.split("\t")
+        # TODO: have an actual image here
         photo = {"title": attr[2], "creation_date": datetime.datetime.utcnow(),
                  "modify_date": datetime.datetime.utcnow(), "filename": attr[3],
-                 "width": attr[4], "height": attr[5], "images": []}
+                 "width": attr[4], "height": attr[5]}
         db.photos.save(photo)
-        db.albums.update( {"title": attr[1]}, {"$addToSet": {"images": photo["_id"]}} )
-        db.albums.update( {"title": attr[1]}, {"$set": {"modify_date": datetime.datetime.utcnow()}} )
+
+        user = db.users.find_one({"name": username})
+        for album_id in user["albums"]: # iterate through the users albums
+            # check if album has right title
+            if (db.albums.find_one({"_id": album_id})["title"] == attr[1]):
+                db.albums.update( {"_id": album_id}, {"$addToSet": {"images": photo["_id"]}})
+                db.albums.update( {"_id": album_id}, {"$set": {"modify_date": datetime.datetime.utcnow()}})
+
         self.socket.send("+OK\r\n")
         return 0
 
@@ -113,6 +127,9 @@ class Commands:
     def del_album_handle(self, command):
         name = " ".join(command.split("\t")[1:])
         db.albums.remove( {"title": name} )
+
+        # TODO: update user's albums
+
         self.socket.send("+OK\r\n")
         return 0
 
@@ -124,12 +141,40 @@ class Commands:
         photo_id = db.photos.find_one({"title": photo_name})["_id"]
         print("photo id %s yup" % photo_id)
         db.photos.remove( {"title": photo_name} )
+
+        # TODO: update user's specific album
         db.albums.update( {"title": album_name}, {"$pull": {"images": photo_id}} )
         self.socket.send("+OK\r\n")
         return 0
 
-    def get_handle(self, command):
-        self.socket.send(database[command.split(" ")[1]] + "\r\n")
+    def set_album_handle(self, command):
+        print("INSDE")
+        arr = command.split("\t")
+        album_name = arr[1]
+        i = 2
+        print("album name %s" % album_name)
+        while i < len(arr):
+            print("trying querty")
+            db.albums.update( {"title": album_name}, {"$set" : {arr[i] : arr[i+1]} })
+            print("finished query")
+            if (arr[i] == "title"):
+                album_name = arr[i+1]
+            i+= 2
+        db.albums.update( {"title": album_name},
+                          {"$set": {"modify_date": datetime.datetime.utcnow()}} )
+        self.socket.send("+OK\r\n")
+        return 0
+
+
+    #print("SET PHOTO \talbum1\tI love \\t Grapes!!!\ttitle\tnew_photo\tfilename\tnew_grapes.png")
+    def set_photo_handle(self, command):
+        arr = command.split("\t")
+        album_name = arr[1]
+        photo_name = arr[2]
+        i = 2
+        #while i < len(arr):
+
+        self.socket.send("+OK\r\n")
         return 0
 
 
@@ -201,17 +246,23 @@ class ConnectionHandler:
 
     # checks for valid client
     def authentication_handle(self):
+        global username
         while (not self.valid_client):
             # check if valid_client appears on list
             self.collect_input()
             username = self.command
+            print("trying username %s" % username)
             if (db.users.find_one({"name": self.command})):
+                print("found username")
                 self.collect_input()
+                print("after collection with username")
                 if (db.users.find_one({"name": username, "password": self.command})):
+                    print("was valid")
                     self.valid_client = True
                     self.timeout.cancel()
                     self.reset_timer()
                     self.socket.send("+OK\r\n")
+                    print("sent info")
                 else:
                     self.socket.send("-Error 1.2 Invalid password\r\n")
             else:
@@ -220,12 +271,18 @@ class ConnectionHandler:
 
     def handle(self):
         try:
+            print("sent")
             self.socket.send("South Korea Server")
+            print("after sent")
             self.timeout.start()
             self.authentication_handle()
+            print("finished authentication")
             c = Commands(self.socket)
+            print("before loop")
             while (not self.complete):
+                print("gathering input")
                 self.collect_input()
+                print("received input")
                 request = c.command_handle(self.command)
                 if (request == 0):
                     self.reset_timer()
@@ -298,6 +355,7 @@ num_conn_lock = Lock()
 num_connections = 0
 host = "00000"
 port = 0000
+username = ""
 
 
 def connect_db():

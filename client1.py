@@ -45,21 +45,45 @@ def sendmsg(msgid, hostname, portnum, sender, receiver):
     # identity has been validated
 
 
-    print("CREATE ALBUM %s" % "album1")
-    send(s, "CREATE ALBUM %s\r\n" % "album1")
+    # print("CREATE ALBUM %s" % "album1")
+    # send(s, "CREATE ALBUM %s\r\n" % "album1")
+    # print(s.recv(500))
+
+    print("CREATE ALBUM %s" % "album2")
+    send(s, "CREATE ALBUM %s\r\n" % "album2")
     print(s.recv(500))
 
-    print("CREATE PHOTO \talbum1\tI love \\t Grapes!!!\tgrapes.png\t450 \t 320")
-    send(s, "CREATE PHOTO \talbum1\tI love \\t Grapes!!!\tgrapes.png\t450 \t 320\r\n")
+    print("CREATE PHOTO \talbum2\tI love \\t Grapes!!!\tgrapes.png\t450 \t 320")
+    send(s, "CREATE PHOTO \talbum2\tI love \\t Grapes!!!\tgrapes.png\t450 \t 320\r\n")
     print(s.recv(500))
 
-    print("DEL PHOTO \talbum1\tI love \\t Grapes!!!")
-    send(s, "DEL PHOTO \talbum1\tI love \\t Grapes!!!\r\n")
-    print(s.recv(500))
+    # print("DEL PHOTO \talbum1\tI love \\t Grapes!!!")
+    # send(s, "DEL PHOTO \talbum1\tI love \\t Grapes!!!\r\n")
+    # print(s.recv(500))
 
-    print("DEL ALBUM \t%s" % "album1")
-    send(s, "DEL ALBUM \t%s\r\n" % "album1")
-    print(s.recv(500))
+    # print("SET ALBUM \talbum1\ttitle\tnew_album")
+    # send(s, "SET ALBUM \talbum1\ttitle\tnew_album\r\n")
+    # print(s.recv(500))
+    #
+    # print("SET ALBUM \tnew_album\ttitle\talbum1")
+    # send(s, "SET ALBUM \tnew_album\ttitle\talbum1\r\n")
+    # print(s.recv(500))
+    #
+    # print("SET PHOTO \talbum1\tI love \\t Grapes!!!\ttitle\tnew_photo\tfilename\tnew_grapes.png")
+    # send(s, "SET PHOTO \talbum1\tI love \\t Grapes!!!\ttitle\tnew_photo\tfilename\tnew_grapes.png\r\n")
+    # print(s.recv(500))
+
+    # print("SET PHOTO \talbum1\tnew_photo\ttitle\tI love \\t Grapes!!!\tfilename\tgrapes.png")
+    # send(s, "SET PHOTO \talbum1\tnew_photo\ttitle\tI love \\t Grapes!!!\tfilename\tgrapes.png\r\n")
+    # print(s.recv(500))
+
+    #set photo
+    #get functions
+    #how encode actual images
+
+    # print("DEL ALBUM \t%s" % "album1")
+    # send(s, "DEL ALBUM \t%s\r\n" % "album1")
+    # print(s.recv(500))
 
     #f = open("images_client1/graph.png", "rb")
     #l = f.read()
