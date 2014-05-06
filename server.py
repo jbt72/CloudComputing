@@ -70,7 +70,8 @@ class ThreadPool:
 # ===================================
 # Commands
 # ===================================
-
+# TODO: when creating check for uniqueness
+# TODO: when updating, setting, deleting, check object exists. If not send error message using socket
 class Commands:
     def __init__(self, socket):
         self.socket = socket
@@ -80,6 +81,8 @@ class Commands:
                         'DEL PHOTO': self.del_photo_handle,
                         'SET ALBUM': self.set_album_handle,
                         'SET PHOTO': self.set_photo_handle,
+                        'GET ALBUM': self.get_album_handle,
+                        'GET PHOTO': self.get_photo_handle,
                         'PING': self.ping_handle,
                         'QUIT': self.quit_handle}
 
@@ -125,74 +128,114 @@ class Commands:
 
 
     def del_album_handle(self, command):
-        name = " ".join(command.split("\t")[1:])
-        db.albums.remove( {"title": name} )
+        album_name = command.split("\t")[1]
+        user = db.users.find_one({"name": username})
 
-        # TODO: update user's albums
+        for album_id in user["albums"]: # iterate through the users albums
+            album = db.albums.find_one({"_id": album_id})
+            # check if album has right title
+            if album["title"] == album_name:
+                for photo_id in album["images"]:
+                    db.photos.remove({"_id": photo_id})
+                 # We remove all children images of this album since no image is referenced
+                 # by the multiple album
+                 # POTIONIAL OPTIMIZATION: allow images to be referenced multiple times
+                db.albums.remove( {"_id": album_id} )
+                db.users.update({"name": username}, {"$pull": {"albums": album_id}})
 
         self.socket.send("+OK\r\n")
         return 0
+
+
 
     def del_photo_handle(self, command):
-        photo_name = " ".join(command.split("\t")[2:])
+        photo_name = command.split("\t")[2]
         album_name = command.split("\t")[1]
-        print("photoname %s yup" % photo_name)
 
-        photo_id = db.photos.find_one({"title": photo_name})["_id"]
-        print("photo id %s yup" % photo_id)
-        db.photos.remove( {"title": photo_name} )
+        user = db.users.find_one({"name": username})
+        for album_id in user["albums"]: # iterate through the users albums
+            # check if album has right title
+            album = db.albums.find_one({"_id": album_id})
+            if (album["title"] == album_name):
+                for photo_id in album["images"]:
+                    if (db.photos.find_one({"_id": photo_id})["title"] == photo_name):
+                        db.photos.remove({"_id": photo_id})
+                        db.albums.update({"_id": album_id}, {"$pull": {"images": photo_id}} )
 
-        # TODO: update user's specific album
-        db.albums.update( {"title": album_name}, {"$pull": {"images": photo_id}} )
         self.socket.send("+OK\r\n")
         return 0
 
+    # This does not update the images feature
     def set_album_handle(self, command):
-        print("INSDE")
-        arr = command.split("\t")
-        album_name = arr[1]
-        i = 2
-        print("album name %s" % album_name)
-        while i < len(arr):
-            print("trying querty")
-            db.albums.update( {"title": album_name}, {"$set" : {arr[i] : arr[i+1]} })
-            print("finished query")
-            if (arr[i] == "title"):
-                album_name = arr[i+1]
-            i+= 2
-        db.albums.update( {"title": album_name},
-                          {"$set": {"modify_date": datetime.datetime.utcnow()}} )
+        attr = command.split("\t")
+        album_name = attr[1]
+        user = db.users.find_one({"name": username})
+        for album_id in user["albums"]: # iterate through the users albums
+            # check if album has right title
+            album = db.albums.find_one({"_id": album_id})
+
+            if (album["title"] == album_name):
+                i = 2
+                while i < len(attr):
+                    db.albums.update({"_id": album["_id"]}, {"$set": {attr[i]: attr[i+1]} })
+                    i+= 2
+
+                db.albums.update( {"title": album_name},
+                                  {"$set": {"modify_date": datetime.datetime.utcnow()}} )
         self.socket.send("+OK\r\n")
         return 0
 
 
-    #print("SET PHOTO \talbum1\tI love \\t Grapes!!!\ttitle\tnew_photo\tfilename\tnew_grapes.png")
     def set_photo_handle(self, command):
-        arr = command.split("\t")
-        album_name = arr[1]
-        photo_name = arr[2]
-        i = 2
-        #while i < len(arr):
+        attr = command.split("\t")
+        album_name = attr[1]
+        photo_name = attr[2]
+        user = db.users.find_one({"name": username})
+        for album_id in user["albums"]: # iterate through the users albums
+            # check if album has right title
+            album = db.albums.find_one({"_id": album_id})
+            if (album["title"] == album_name):
+                for photo_id in album["images"]:
+                    if (db.photos.find_one({"_id": photo_id})["title"] == photo_name):
+                        i = 3
+                        while i < len(attr):
+                            db.photos.update({"_id": photo_id}, {"$set": {attr[i]: attr[i+1]} })
+                            i+= 2
 
         self.socket.send("+OK\r\n")
         return 0
 
+    # Socket simply sends the string version of the JSON object
+    def get_photo_handle(self, command):
+        attr = command.split("\t")
+        album_name = attr[1]
+        photo_name = attr[2]
+        user = db.users.find_one({"name": username})
+        for album_id in user["albums"]: # iterate through the users albums
+            # check if album has right title
+            album = db.albums.find_one({"_id": album_id})
+            if (album["title"] == album_name):
+                for photo_id in album["images"]:
+                    photo = db.photos.find_one({"_id": photo_id})
+                    if (photo["title"] == photo_name):
+                        self.socket.send(str(photo))
+        return 0
 
-    def set_handle(self, command):
-        database[command.split(" ")[1]] = command.split(" ")[2]
-        self.socket.send("+OK\r\n")
+    def get_album_handle(self, command):
+        attr = command.split("\t")
+        album_name = attr[1]
+        user = db.users.find_one({"name": username})
+        for album_id in user["albums"]: # iterate through the users albums
+            # check if album has right title
+            album = db.albums.find_one({"_id": album_id})
+            if (album["title"] == album_name):
+                self.socket.send(str(album))
         return 0
 
     def quit_handle(self, command):
         self.socket.send("+OK\r\n")
         return 1
 
-
-    def del_handle(self, command):
-        for key in command.split(" ")[1:]:
-            del database[key]
-        self.socket.send("+OK\r\n")
-        return 0
 
     # PING the server
     def ping_handle(self, command):
@@ -238,7 +281,7 @@ class ConnectionHandler:
         while (self.unprocessed_packets.partition(self.partitioner)[1] == ""):
             self.unprocessed_packets += self.socket.recv(500)
             #print ("In loop: unprocessed packets %s" % self.unprocessed_packets)
-        self.command = self.unprocessed_packets.partition(self.partitioner)[0]
+        self.command = self.unprocessed_packets.partition(self.partitioner)[0] #\r\n is removed
         print("new command %s" % self.command)
         self.unprocessed_packets = self.unprocessed_packets.partition(self.partitioner)[2]
         print("new unprocessed packets %s" % self.unprocessed_packets)
