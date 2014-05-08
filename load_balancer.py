@@ -204,8 +204,9 @@ def serverloop():
                 num_connections += 1
 
 def child_server(info):
-    (hostname, portnum) = info
-    s = server.Server(hostname, portnum)
+    print("info: %s" % str(info))
+    (hostname, portnum, db_conn_address) = info
+    s = server.Server(hostname, int(portnum), db_conn_address)
     servers_sockets.append(s)
 
 
@@ -237,7 +238,9 @@ num_jobs = 0
 netID = "jbt72"
 valid_clients = {'Johanni27': '1234'}
 database = {"mykey": "Hello"}
-servers = [ ("127.0.0.1", 8769), ("127.0.0.1", 8770)]
+# [ (ip_address, port_num, db_conn_address)
+servers = [ ("127.0.0.1", "8769", "mongodb://Johanni27:1234@ds047207.mongolab.com:47207/motherland"),
+            ("127.0.0.1", "8770", "mongodb://Johanni271:1234@ds033257.mongolab.com:33257/tomorrowland")]
 servers_sockets = []
 
 

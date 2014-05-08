@@ -140,7 +140,7 @@ class Commands:
                  # We remove all children images of this album since no image is referenced
                  # by the multiple album
                  # POTIONIAL OPTIMIZATION: allow images to be referenced multiple times
-                db.albums.remove( {"_id": album_id} )
+                db.albums.remove({"_id": album_id})
                 db.users.update({"name": username}, {"$pull": {"albums": album_id}})
 
         self.socket.send("+OK\r\n")
@@ -228,7 +228,7 @@ class Commands:
         for album_id in user["albums"]: # iterate through the users albums
             # check if album has right title
             album = db.albums.find_one({"_id": album_id})
-            if (album["title"] == album_name):
+            if album["title"] == album_name:
                 self.socket.send(str(album))
         return 0
 
@@ -403,17 +403,30 @@ username = ""
 
 def connect_db():
     global db
-    client = MongoClient('mongodb://Johanni27:1234@ds047207.mongolab.com:47207/motherland')
-    db = client.motherland
+    client = MongoClient(db_address)
+    arr = db_address.split("/")
+    db_name = arr[len(arr) - 1]
+    if (db_name == "motherland"):
+        db = client.motherland
+    elif (db_name == "tomorrowland"):
+        db = client.tomorrowland
+    else:
+        print("Error: Unable to connect to a database")
 
 
 class Server:
-    def __init__(self, hostname, port_num):
+    def __init__(self, hostname, port_num, db_conn_address):
         global host
         host = hostname
         global port
         port = port_num
+        global db_address
+        db_address = db_conn_address
         print("Server coming up on %s:%i" % (host, port))
         # Connect to DB
         connect_db()
         serverloop()
+
+#TODO: Decide the cache
+# hashmap-> Key: user_id + username + album_id + photo_id Value: string of photo JSON object
+#TODO: Create 3 databases
