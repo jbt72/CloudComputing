@@ -190,6 +190,89 @@ class lruCache(object):
 
         self.listSize -= n
 
+class WriteBackCacheManager(object):
+
+    def __init__(self, store, size):
+        self.store = store
+
+        # Create a set to hold the dirty keys.
+        self.dirty = set()
+
+        # Define a callback function to be called by the cache when a
+        # key/value pair is about to be ejected. This callback will check to
+        # see if the key is in the dirty set. If so, then it will update the
+        # store object and remove the key from the dirty set.
+        def callback(key, value):
+            if key in self.dirty:
+                self.store[key] = value
+                self.dirty.remove(key)
+
+        # Create a cache and give it the callback function.
+        self.cache = lruCache(size, callback)
+        print("sweetness")
+
+    # Returns/sets the size of the managed cache.
+    def size(self, size=None):
+        return self.cache.size(size)
+
+    def clear(self):
+        self.cache.clear()
+        self.dirty.clear()
+        self.store.clear()
+
+    def contains(self, key):
+        # Check the cache first, since if it is there we can return quickly.
+        if key in self.cache:
+            return True
+
+        # Not in the cache. Might be in the underlying store.
+        if key in self.store:
+            return True
+
+        return False
+
+    # def getitem(self, key):
+    #     # First we try the cache. If successful we just return the value. If
+    #     # not we catch KeyError and ignore it since that just means the key
+    #     # was not in the cache.
+    #     try:
+    #         return self.cache[key]
+    #     except KeyError:
+    #         pass
+    #
+    #     # It wasn't in the cache. Look it up in the store, add the entry to
+    #     # the cache, and return the value.
+    #     # TODO: Look up store DB
+    #     value = self.store[key]
+    #     self.cache[key] = value
+    #     return value
+    #
+    # def setitem(self, key, value):
+    #     # Add the key/value pair to the cache.
+    #     self.cache[key] = value
+    #     self.dirty.add(key)
+    #
+    # def delitem(self, key):
+    #
+    #     found = False
+    #     try:
+    #         del self.cache[key]
+    #         found = True
+    #         self.dirty.remove(key)
+    #     except KeyError:
+    #         pass
+    #
+    #     try:
+    #         del self.store[key]
+    #         found = True
+    #     except KeyError:
+    #         pass
+    #
+    #     if not found:  # If not found in cache or store, raise error.
+    #         raise KeyError
+
+
+
 
 c = lruCache(100)
 print("len %s" % c.len())
@@ -206,3 +289,4 @@ print("value %s" % c.get(key))
 c.delitem(key)
 print("item was deleted")
 print("cache contains %s" % c.contains(key))
+

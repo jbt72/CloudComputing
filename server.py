@@ -11,6 +11,7 @@ from collections import deque
 import datetime
 import pymongo
 from pymongo import MongoClient
+import lruCache
 
 
 
@@ -403,6 +404,7 @@ username = ""
 
 def connect_db():
     global db
+    global cache
     client = MongoClient(db_address)
     arr = db_address.split("/")
     db_name = arr[len(arr) - 1]
@@ -410,8 +412,12 @@ def connect_db():
         db = client.motherland
     elif (db_name == "tomorrowland"):
         db = client.tomorrowland
+    elif (db_name == "candyland"):
+        db = client.candyland
     else:
         print("Error: Unable to connect to a database")
+
+    cache = lruCache.WriteBackCacheManager(db, 100)
 
 
 class Server:

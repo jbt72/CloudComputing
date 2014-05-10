@@ -240,7 +240,8 @@ valid_clients = {'Johanni27': '1234'}
 database = {"mykey": "Hello"}
 # [ (ip_address, port_num, db_conn_address)
 servers = [ ("127.0.0.1", "8769", "mongodb://Johanni27:1234@ds047207.mongolab.com:47207/motherland"),
-            ("127.0.0.1", "8770", "mongodb://Johanni271:1234@ds033257.mongolab.com:33257/tomorrowland")]
+            ("127.0.0.1", "8770", "mongodb://Johanni271:1234@ds033257.mongolab.com:33257/tomorrowland"),
+            ("127.0.0.1", "8778", "mongodb://Johanni272:1234@ds043037.mongolab.com:43037/candyland")]
 servers_sockets = []
 
 
