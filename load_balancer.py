@@ -197,9 +197,7 @@ def serverloop():
         # TODO: block if more than 32
         with num_conn_lock:
             if (num_connections < 5):
-                print("inside if for LB")
                 (clientsocket, address) = serversocket.accept()
-                print("LB ACCEPTED")
                 ct = ConnectionHandler(clientsocket)
                 thread_pool.add_job(ct)
                 num_connections += 1

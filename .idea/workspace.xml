@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5f01dae9-f42c-4d05-a479-8d913eea2771" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client1.py" afterPath="$PROJECT_DIR$/client1.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/load_balancer.py" afterPath="$PROJECT_DIR$/load_balancer.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lruCache.py" afterPath="$PROJECT_DIR$/lruCache.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.py" afterPath="$PROJECT_DIR$/server.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="CloudComputing.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,19 +25,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="server.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="server.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="386" column="30" selection-start="14279" selection-end="14279" vertical-scroll-proportion="-13.846154" vertical-offset="5250" max-vertical-offset="9075">
+            <state line="386" column="30" selection-start="14279" selection-end="14279" vertical-scroll-proportion="-4.3656597" vertical-offset="8356" max-vertical-offset="9075">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="load_balancer.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="load_balancer.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/load_balancer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="209" column="0" selection-start="6330" selection-end="6330" vertical-scroll-proportion="0.54689986" vertical-offset="2791" max-vertical-offset="4050">
+            <state line="198" column="37" selection-start="5903" selection-end="5903" vertical-scroll-proportion="16.192308" vertical-offset="3391" max-vertical-offset="4020">
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -463,19 +459,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="386" column="30" selection-start="14279" selection-end="14279" vertical-scroll-proportion="-13.846154" vertical-offset="5250" max-vertical-offset="9075">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/load_balancer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="209" column="0" selection-start="6330" selection-end="6330" vertical-scroll-proportion="0.54689986" vertical-offset="2791" max-vertical-offset="4050">
+        <state line="198" column="37" selection-start="5903" selection-end="5903" vertical-scroll-proportion="16.192308" vertical-offset="3391" max-vertical-offset="4020">
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="386" column="30" selection-start="14279" selection-end="14279" vertical-scroll-proportion="-4.3656597" vertical-offset="8356" max-vertical-offset="9075">
+          <folding />
         </state>
       </provider>
     </entry>
