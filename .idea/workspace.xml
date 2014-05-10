@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5f01dae9-f42c-4d05-a479-8d913eea2771" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/load_balancer.py" afterPath="$PROJECT_DIR$/load_balancer.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.py" afterPath="$PROJECT_DIR$/server.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lruCache.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="CloudComputing.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -26,13 +26,22 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="server.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="server.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="395" column="0" selection-start="14318" selection-end="14318" vertical-scroll-proportion="0.018691588" vertical-offset="5913" max-vertical-offset="6555">
+            <state line="173" column="44" selection-start="6322" selection-end="6322" vertical-scroll-proportion="0.0" vertical-offset="2317" max-vertical-offset="6555">
               <folding>
                 <element signature="e#26#39#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="lruCache.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/lruCache.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="190" column="26" selection-start="6407" selection-end="6407" vertical-scroll-proportion="0.41467065" vertical-offset="2953" max-vertical-offset="3621">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -55,6 +64,7 @@
             <state line="79" column="48" selection-start="2008" selection-end="2016" vertical-scroll-proportion="-8.230769" vertical-offset="971" max-vertical-offset="3990">
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
+                <marker date="1399527736000" expanded="true" signature="6123:6298" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -79,13 +89,15 @@
         <option value="$PROJECT_DIR$/client1.py" />
         <option value="$PROJECT_DIR$/load_balancer.py" />
         <option value="$PROJECT_DIR$/server.py" />
+        <option value="$PROJECT_DIR$/lruCache" />
+        <option value="$PROJECT_DIR$/lruCache.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="41" />
+    <option name="x" value="234" />
     <option name="y" value="22" />
-    <option name="width" value="1026" />
+    <option name="width" value="888" />
     <option name="height" value="765" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
@@ -306,14 +318,14 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="41" y="22" width="1026" height="765" extended-state="0" />
+    <frame x="234" y="22" width="888" height="765" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18323587" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.109234236" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -430,16 +442,24 @@
         <state line="79" column="48" selection-start="2008" selection-end="2016" vertical-scroll-proportion="-8.230769" vertical-offset="971" max-vertical-offset="3990">
           <folding>
             <element signature="e#0#13#0" expanded="true" />
+            <marker date="1399527736000" expanded="true" signature="6123:6298" placeholder="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="395" column="0" selection-start="14318" selection-end="14318" vertical-scroll-proportion="0.018691588" vertical-offset="5913" max-vertical-offset="6555">
+        <state line="173" column="44" selection-start="6322" selection-end="6322" vertical-scroll-proportion="0.0" vertical-offset="2317" max-vertical-offset="6555">
           <folding>
             <element signature="e#26#39#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lruCache.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="190" column="26" selection-start="6407" selection-end="6407" vertical-scroll-proportion="0.41467065" vertical-offset="2953" max-vertical-offset="3621">
+          <folding />
         </state>
       </provider>
     </entry>
