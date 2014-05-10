@@ -4,7 +4,7 @@ import datetime
 
 #hostname and port for load balancer
 host = sys.argv[1] if len(sys.argv) > 1 else "127.0.0.1"
-port = int(sys.argv[2]) if len(sys.argv) > 2 else 8765
+port = int(sys.argv[2]) if len(sys.argv) > 2 else 8790
 
 toaddr = sys.argv[3] if len(sys.argv) > 3 else "nobody@example.com"
 fromaddr = sys.argv[4] if len(sys.argv) > 4 else "nobody@example.com"
@@ -45,9 +45,9 @@ def sendmsg(msgid, hostname, portnum, sender, receiver):
     # identity has been validated
 
 
-    # print("CREATE ALBUM %s" % "album1")
-    # send(s, "CREATE ALBUM %s\r\n" % "album1")
-    # print(s.recv(500))
+    print("CREATE ALBUM %s" % "album1")
+    send(s, "CREATE ALBUM %s\r\n" % "album1")
+    print(s.recv(500))
 
     # print("CREATE ALBUM %s" % "album2")
     # send(s, "CREATE ALBUM %s\r\n" % "album2")
@@ -77,13 +77,17 @@ def sendmsg(msgid, hostname, portnum, sender, receiver):
     # send(s, "SET PHOTO \talbum1\tI love \\t Grapes!!!\ttitle\ttomatoes\tfilename\tnew_grapes.png\r\n")
     # print(s.recv(500))
 
-    print("GET PHOTO \talbum1\tphoto1")
-    send(s, "GET PHOTO \talbum1\tphoto1\r\n")
-    print(s.recv(500))
-
-    print("GET ALBUM \talbum1")
-    send(s, "GET ALBUM \talbum1\r\n")
-    print(s.recv(500))
+    # print("GET PHOTO \talbum1\tphoto1")
+    # send(s, "GET PHOTO \talbum1\tphoto1\r\n")
+    # print(s.recv(500))
+    #
+    # print("GET ALBUM \talbum1")
+    # send(s, "GET ALBUM \talbum1\r\n")
+    # print(s.recv(500))
+    #
+    # print("GET ALBUM USER\tJohanni100\talbum1")
+    # send(s, "GET ALBUM USER\tJohanni100\talbum1\r\n")
+    # print(s.recv(500))
 
     #set photo
     #get functions
@@ -104,6 +108,8 @@ def sendmsg(msgid, hostname, portnum, sender, receiver):
 
 
 # connect to load balancer and get a hostname and portnum for server
+print("trying to connect to Load Balancer")
 (hostname_s, portnum_s) = setup_connection(host, port)
+print("succesffully connected with Load Balancer")
 print("Connection with hostname %s and port %s" % (hostname_s, portnum_s))
 sendmsg(1, hostname_s, portnum_s, fromaddr, toaddr)

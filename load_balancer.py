@@ -12,7 +12,7 @@ import os
 
 
 host = "127.0.0.1"
-port = 8765
+port = 8790
 type = 1 #0: random 1: round-robbin 2: least_connections 3: least connections round-robbin
 counter = 0
 
@@ -190,24 +190,23 @@ def serverloop():
     # backlog is # of pending connections to allow
     serversocket.listen(5)
 
-
     while True:
         # accept a connection
         # s.accept() blocks until connection received
         # address = [host, port]
         # TODO: block if more than 32
         with num_conn_lock:
-            if (num_connections < 1):
+            if (num_connections < 5):
+                print("inside if for LB")
                 (clientsocket, address) = serversocket.accept()
+                print("LB ACCEPTED")
                 ct = ConnectionHandler(clientsocket)
                 thread_pool.add_job(ct)
                 num_connections += 1
 
 def child_server(info):
-    print("info: %s" % str(info))
     (hostname, portnum, db_conn_address) = info
-    s = server.Server(hostname, int(portnum), db_conn_address)
-    servers_sockets.append(s)
+    s = server.Server(hostname, int(portnum), db_conn_address, servers_sockets)
 
 
 def start_servers():
@@ -215,6 +214,7 @@ def start_servers():
         newpid = os.fork()
         if newpid == 0:
             child_server(server)
+
 
 
 
@@ -242,7 +242,8 @@ database = {"mykey": "Hello"}
 servers = [ ("127.0.0.1", "8769", "mongodb://Johanni27:1234@ds047207.mongolab.com:47207/motherland"),
             ("127.0.0.1", "8770", "mongodb://Johanni271:1234@ds033257.mongolab.com:33257/tomorrowland"),
             ("127.0.0.1", "8778", "mongodb://Johanni272:1234@ds043037.mongolab.com:43037/candyland")]
-servers_sockets = []
+servers_sockets = {"motherland": ("127.0.0.1", "8769"), "tomorrowland": ("127.0.0.1", "8770"),
+                    "candyland": ("127.0.0.1", "8778")}
 
 
 num_conn_lock = Lock()
@@ -251,7 +252,8 @@ num_connections = 0
 print("Gateway Server coming up on %s:%i" % (host, port))
 
 
-
+global loop
+loop = True
 
 # Create & start the servers
 start_servers()
@@ -259,3 +261,4 @@ start_servers()
 
 serverloop()
 __author__ = 'johanni27'
+

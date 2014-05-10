@@ -3,6 +3,8 @@ __author__ = 'johanni27'
 # Cache implementaion with a Least Recently Used (LRU) replacement policy and
 # a basic dictionary interface.
 
+from bson.objectid import ObjectId
+
 
 class dlnode(object):
     def __init__(self):
@@ -204,6 +206,16 @@ class WriteBackCacheManager(object):
         # store object and remove the key from the dirty set.
         def callback(key, value):
             if key in self.dirty:
+                names = key.split("\r\n")
+                # use length to figure out if photo or album or user
+                user = store.users.find_one({"_id": names[0]})
+                for album_id in user["albums"]: # iterate through the users albums
+                    album = store.albums.find_one({"_id": album_id})
+                    if (album["title"] == names[1]):
+                        for photo_id in album["images"]:
+                            if (store.photos.find_one({"_id": photo_id})["title"] == names[2]):
+                                # TODO update photo
+                                a = 2
                 self.store[key] = value
                 self.dirty.remove(key)
 
@@ -247,10 +259,10 @@ class WriteBackCacheManager(object):
     #     self.cache[key] = value
     #     return value
     #
-    # def setitem(self, key, value):
-    #     # Add the key/value pair to the cache.
-    #     self.cache[key] = value
-    #     self.dirty.add(key)
+    def setitem(self, key, value):
+        # Add the key/value pair to the cache.
+        self.cache[key] = value
+        self.dirty.add(key)
     #
     # def delitem(self, key):
     #
@@ -274,19 +286,19 @@ class WriteBackCacheManager(object):
 
 
 
-c = lruCache(100)
-print("len %s" % c.len())
-key = "lkjadlkasjfsadjfasldfjasldfj_lskjdfalsdjfadfa_lkjflkjsdfasd"
-value = "{kdljfalsdjf,;jdfa;lskdjfasmaskdfjoefkjfsdf{{{}}}}}"
-print("cache contains %s" % c.contains(key))
-c.set(key, value)
-print("key was added to cache")
-print("cache contains %s" % c.contains(key))
-print("value %s" % c.get(key))
-c.set(key, value + "blahhhhhhhhhhh")
-print("value was updated")
-print("value %s" % c.get(key))
-c.delitem(key)
-print("item was deleted")
-print("cache contains %s" % c.contains(key))
+# c = lruCache(100)
+# print("len %s" % c.len())
+# key = "lkjadlkasjfsadjfasldfjasldfj_lskjdfalsdjfadfa_lkjflkjsdfasd"
+# value = "{kdljfalsdjf,;jdfa;lskdjfasmaskdfjoefkjfsdf{{{}}}}}"
+# print("cache contains %s" % c.contains(key))
+# c.set(key, value)
+# print("key was added to cache")
+# print("cache contains %s" % c.contains(key))
+# print("value %s" % c.get(key))
+# c.set(key, value + "blahhhhhhhhhhh")
+# print("value was updated")
+# print("value %s" % c.get(key))
+# c.delitem(key)
+# print("item was deleted")
+# print("cache contains %s" % c.contains(key))
 

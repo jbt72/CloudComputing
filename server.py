@@ -9,9 +9,11 @@ import time
 import re
 from collections import deque
 import datetime
+from bson.objectid import ObjectId
 import pymongo
 from pymongo import MongoClient
 import lruCache
+
 
 
 
@@ -32,7 +34,7 @@ class Worker(Thread):
         global num_conn_lock
         global num_connections
         while True:
-            # grab work from queue syncrohnized
+            # grab work from queue synchronized
             with self.ll_lock:
                 while not (num_jobs > 0):
                     self.occupied.wait()
@@ -84,6 +86,7 @@ class Commands:
                         'SET PHOTO': self.set_photo_handle,
                         'GET ALBUM': self.get_album_handle,
                         'GET PHOTO': self.get_photo_handle,
+                        #'GET ALBUM USER': self.get_album_user_handle,
                         'PING': self.ping_handle,
                         'QUIT': self.quit_handle}
 
@@ -123,7 +126,8 @@ class Commands:
             if (db.albums.find_one({"_id": album_id})["title"] == attr[1]):
                 db.albums.update( {"_id": album_id}, {"$addToSet": {"images": photo["_id"]}})
                 db.albums.update( {"_id": album_id}, {"$set": {"modify_date": datetime.datetime.utcnow()}})
-
+                # key: user_id\r\album_name\r\nphoto_name
+                cache.setitem(user["_id"] + "\r\n" + attr[1] + "\r\n" + attr[2], str(photo))
         self.socket.send("+OK\r\n")
         return 0
 
@@ -206,6 +210,7 @@ class Commands:
         self.socket.send("+OK\r\n")
         return 0
 
+    # TODO check if server is master of object
     # Socket simply sends the string version of the JSON object
     def get_photo_handle(self, command):
         attr = command.split("\t")
@@ -222,15 +227,42 @@ class Commands:
                         self.socket.send(str(photo))
         return 0
 
+
+    # def get_album_handle(self, command):
+    #     attr = command.split("\t")
+    #     album_name = attr[1]
+    #     user = db.users.find_one({"name": username})
+    #     for album_id in user["albums"]: # iterate through the users albums
+    #         # check if album has right title
+    #         album = db.albums.find_one({"_id": album_id})
+    #         if album["title"] == album_name:
+    #             self.socket.send(str(album))
+    #     return 0
+
+    # specifies a user
     def get_album_handle(self, command):
         attr = command.split("\t")
-        album_name = attr[1]
-        user = db.users.find_one({"name": username})
-        for album_id in user["albums"]: # iterate through the users albums
-            # check if album has right title
-            album = db.albums.find_one({"_id": album_id})
-            if album["title"] == album_name:
-                self.socket.send(str(album))
+        if (len(attr) < 3):
+            album_username = username
+        album_username = attr[1]
+        album_name = attr[2]
+        # find master server
+        album_master_name = users_db.users.find_one({"name": album_username})["master"]
+        if (album_master_name == master):
+            user = db.users.find_one({"name": album_username})
+            for album_id in user["albums"]: # iterate through the users albums
+                # check if album has right title
+                album = db.albums.find_one({"_id": album_id})
+                if album["title"] == album_name:
+                    self.socket.send(str(album))
+        else:
+            # TODO check normal cache
+            # if not there than ask info
+            socket = master_sockets[album_master_name]
+            send(socket, "GET ALBUM \talbum_name\r\n")
+            self.socket.send(s.recv(500))
+
+
         return 0
 
     def quit_handle(self, command):
@@ -336,6 +368,48 @@ class ConnectionHandler:
             self.handle_timeout
             return
 
+# ===================================
+# Server Connection Handler
+# ===================================
+
+# handle a single client request
+# Each client is handled by a separate thread
+class serverConnectionHandler:
+
+    def __init__(self, socket, initiated):
+        self.socket = socket
+        self.unprocessed_packets = ""
+        self.command = ""
+        self.was_initator = initiated
+
+
+    def collect_input(self):
+        self.partitioner = "\r\n"
+        print ("Before loop: unprocessed packets %s" % self.unprocessed_packets)
+        while (self.unprocessed_packets.partition(self.partitioner)[1] == ""):
+            self.unprocessed_packets += self.socket.recv(500)
+            #print ("In loop: unprocessed packets %s" % self.unprocessed_packets)
+        self.command = self.unprocessed_packets.partition(self.partitioner)[0] #\r\n is removed
+        print("new command %s" % self.command)
+        self.unprocessed_packets = self.unprocessed_packets.partition(self.partitioner)[2]
+        print("new unprocessed packets %s" % self.unprocessed_packets)
+
+
+    def handle(self):
+        c = Commands(self.socket)
+        if self.was_initator:
+            otherSocketName = self.socket.recv(500)
+            self.socket.send(master)
+        else:
+            self.socket.send(master)
+            otherSocketName = self.socket.recv(500)
+        master_sockets[otherSocketName] = self.socket
+        while True:
+            self.collect_input()
+            request = c.command_handle(self.command)
+
+
+
 
 # ===================================
 # Main Server Loop
@@ -348,6 +422,7 @@ def serverloop():
 
     global num_conn_lock
     global num_connections
+    global master_sockets
 
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # mark the socket so we can rebind quickly to this port number
@@ -359,19 +434,82 @@ def serverloop():
     # start listening with a backlog of 5 connections
     # backlog is # of pending connections to allow
     serversocket.listen(5)
-    print("success")
 
+    master_sockets = {}
+    num_connections = 0
+    if (master == "motherland"):
+        # send requests to tomorrowland and candy land
+        while num_connections < 1:
+            try:
+                s_candy = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                hostname = "127.0.0.1"
+                portnum = 8778
+                s_candy.connect((hostname, portnum))
+                ct = serverConnectionHandler(s_candy, True)
+                thread_pool.add_job(ct)
+                num_connections += 1
+                print("num connections %s" % num_connections)
+            except socket.error:
+                print("ERROR CONNECTION REFUSED Motherland")
+        while num_connections < 2:
+            try:
+                s_tomor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                hostname = "127.0.0.1"
+                portnum = 8770
+                s_tomor.connect((hostname, portnum))
+                ct = serverConnectionHandler(s_tomor, True)
+                thread_pool.add_job(ct)
+                num_connections += 1
+                print("num connections %s" % num_connections)
+            except socket.error:
+                print("ERROR CONNECTION REFUSED Motherland")
+    elif (master == "tomorrowland"):
+        # send requests to candyland
+        s_candy = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        hostname = "127.0.0.1"
+        portnum = 8778
+        s_candy.connect((hostname, portnum))
+        ct = serverConnectionHandler(s_candy, True)
+        thread_pool.add_job(ct)
+        num_connections += 1
+        print("num connections %s" % num_connections)
+        # then receive a request from motherland
+        while num_connections < 2:
+            with num_conn_lock:
+                # TODO as serverHandler(serversocket, address) instead of connection. no timeouts
+                # TODO save in master_sockets with address used to figure out which is which
+                (otherserversocket, address) = serversocket.accept()
+                ct = serverConnectionHandler(otherserversocket, False)
+                thread_pool.add_job(ct)
+                num_connections += 1
+                print("num connections %s" % num_connections)
+
+    elif (master == "candyland"):
+        # accept requests until have two sockets
+        while num_connections < 2:
+            with num_conn_lock:
+                # TODO as serverHandler(serversocket, address) instead of connection. no timeouts
+                # TODO save in master_sockets with address used to figure out which is which
+                (otherserversocket, address) = serversocket.accept()
+                ct = serverConnectionHandler(otherserversocket, False)
+                thread_pool.add_job(ct)
+                num_connections += 1
+                print("num connections %s" % num_connections)
+    else:
+        print("Error not a master")
+    print("master %s got out!!" % master)
     while True:
         # accept a connection
         # s.accept() blocks until connection received
         # address = [host, port]
-        # TODO: block if more than 32
         with num_conn_lock:
-            if (num_connections < 1):
+            if (num_connections < 5):
                 (clientsocket, address) = serversocket.accept()
                 ct = ConnectionHandler(clientsocket)
                 thread_pool.add_job(ct)
                 num_connections += 1
+                print("num connections %s" % num_connections)
+
 
 # ===================================
 # main
@@ -402,9 +540,10 @@ port = 0000
 username = ""
 
 
-def connect_db():
+def connect_db(db_address):
     global db
     global cache
+    global master
     client = MongoClient(db_address)
     arr = db_address.split("/")
     db_name = arr[len(arr) - 1]
@@ -417,22 +556,56 @@ def connect_db():
     else:
         print("Error: Unable to connect to a database")
 
+    master = db_name
     cache = lruCache.WriteBackCacheManager(db, 100)
+
+def send(socket, message):
+    # In Python 3, must convert message to bytes explicitly.
+    # In Python 2, this does not affect the message.
+    socket.send(message.encode('utf-8'))
+
+# TODO connect to servers hearing using asynchronous and then store in global diction
+# TODO hard code who connects to who
+# TODO: mother -> tommorrow and candy; tomorrow -> candy
+# # {"motherland": socket, "tomorrowland": socket, "candy": socket}
+# def connect_to_servers(servers_info):
+#
+#         a = 2
+
+#     global master_sockets
+#     master_sockets = {}
+#     for s_key in servers_info.keys():
+#         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#         try:
+#             s.connect((servers_info[s_key][0], int(servers_info[s_key][1])))
+#         except StandardError:
+#             print("not yet")
+#         print(s.recv(500))
+#         username = "Johanni27"
+#         password = "1234"
+#         send(s, "%s\r\n" % username)
+#         send(s, "%s\r\n" % password)
+#         print(s.recv(500))
+#         master_sockets[s_key] = s
+
 
 
 class Server:
-    def __init__(self, hostname, port_num, db_conn_address):
+    def __init__(self, hostname, port_num, db_conn_address, server_ss):
         global host
         host = hostname
         global port
+        global users_db
         port = port_num
-        global db_address
-        db_address = db_conn_address
+        global servers_info
+        servers_info = server_ss
+
+        #connect_to_servers(server_ss)
+
         print("Server coming up on %s:%i" % (host, port))
         # Connect to DB
-        connect_db()
+        connect_db(db_conn_address)
+        client = MongoClient("mongodb://Johanni273:1234@ds029847.mongolab.com:29847/userland")
+        users_db = client.userland
         serverloop()
 
-#TODO: Decide the cache
-# hashmap-> Key: user_id + username + album_id + photo_id Value: string of photo JSON object
-#TODO: Create 3 databases
