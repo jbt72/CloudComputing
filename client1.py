@@ -45,9 +45,17 @@ def sendmsg(msgid, hostname, portnum, sender, receiver):
     # identity has been validated
 
 
-    print("CREATE ALBUM %s" % "album1")
-    send(s, "CREATE ALBUM %s\r\n" % "album1")
+    print("CREATE ALBUM \t%s\t%s" % ("Johanni27", "album1J"))
+    send(s, "CREATE ALBUM \t%s\t%s\r\n" % ("Johanni27", "album1J"))
     print(s.recv(500))
+
+    # print("CREATE ALBUM \t%s\t%s" % ("Sarah58", "album1S"))
+    # send(s, "CREATE ALBUM \t%s\t%s\r\n" % ("Sarah58", "album1S"))
+    # print(s.recv(500))
+    #
+    # print("CREATE ALBUM \t%s\t%s" % ("Preslava11", "album1P"))
+    # send(s, "CREATE ALBUM \t%s\t%s\r\n" % ("Preslava11", "album1P"))
+    # print(s.recv(500))
 
     # print("CREATE ALBUM %s" % "album2")
     # send(s, "CREATE ALBUM %s\r\n" % "album2")

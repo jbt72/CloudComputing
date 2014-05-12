@@ -1,5 +1,7 @@
 __author__ = 'johanni27'
 
+__author__ = 'johanni27'
+
 import getopt
 import socket
 import sys
@@ -86,7 +88,6 @@ class Commands:
                         'SET PHOTO': self.set_photo_handle,
                         'GET ALBUM': self.get_album_handle,
                         'GET PHOTO': self.get_photo_handle,
-                        #'GET ALBUM USER': self.get_album_user_handle,
                         'PING': self.ping_handle,
                         'QUIT': self.quit_handle}
 
@@ -102,14 +103,31 @@ class Commands:
             return -1
 
     def create_album_handle(self, command):
-        name = command.split(" ")[2]
-        album = {"title": name, "creation_date": datetime.datetime.utcnow(),
+        attr = command.split("\t")
+        album = {"title": attr[2], "creation_date": datetime.datetime.utcnow(),
                  "modify_date": datetime.datetime.utcnow(), "images": []}
-        db.albums.save(album)
-        db.users.update( {"name": username},
-                         {"$addToSet": {"albums": album["_id"]} } )
-        db.users.update( {"name": username}, {"$set": {"modify_date": datetime.datetime.utcnow()}})
-        self.socket.send("+OK\r\n")
+        album_master = users_db.users.find_one({"name": attr[1]})["master"]
+
+        if album_master == master:
+            db.albums.save(album)
+            db.users.update( {"name": username},
+                             {"$addToSet": {"albums": album["_id"]} } )
+            db.users.update( {"name": username}, {"$set": {"modify_date": datetime.datetime.utcnow()}})
+            self.socket.send("+OK\r\n")
+        else:
+            print("about to ask another server")
+            album_m_s = master_sockets[master + album_master]
+            album("fetched socket for other server")
+            album_m_s.send(command + "\r\n")
+            album("successfully sent command")
+            response = album_m_s.recv(500)
+            print("received resonspe")
+            if (response == "+OK\r\n"):
+                self.socket.send("+OK\r\n")
+            else:
+                self.socket.send("Failure to ask another server")
+
+
         return 0
 
     def create_photo_handle(self, command):
@@ -287,7 +305,7 @@ class ConnectionHandler:
         self.socket = socket
         self.complete = False
         self.clienthostname = ""
-        self.timeout = Timer(3.0, self.handle_timeout)
+        self.timeout = Timer(10.0, self.handle_timeout)
         self.valid_client = False
         self.unprocessed_packets = ""
         self.command = ""
@@ -377,6 +395,7 @@ class ConnectionHandler:
 class serverConnectionHandler:
 
     def __init__(self, socket, initiated):
+        socket.settimeout(None)
         self.socket = socket
         self.unprocessed_packets = ""
         self.command = ""
@@ -394,7 +413,7 @@ class serverConnectionHandler:
         self.unprocessed_packets = self.unprocessed_packets.partition(self.partitioner)[2]
         print("new unprocessed packets %s" % self.unprocessed_packets)
 
-
+    # TODO collect input
     def handle(self):
         c = Commands(self.socket)
         if self.was_initator:
@@ -403,7 +422,7 @@ class serverConnectionHandler:
         else:
             self.socket.send(master)
             otherSocketName = self.socket.recv(500)
-        master_sockets[otherSocketName] = self.socket
+        master_sockets[master + otherSocketName] = self.socket
         while True:
             self.collect_input()
             request = c.command_handle(self.command)
@@ -498,6 +517,8 @@ def serverloop():
     else:
         print("Error not a master")
     print("master %s got out!!" % master)
+
+
     while True:
         # accept a connection
         # s.accept() blocks until connection received
@@ -563,31 +584,6 @@ def send(socket, message):
     # In Python 3, must convert message to bytes explicitly.
     # In Python 2, this does not affect the message.
     socket.send(message.encode('utf-8'))
-
-# TODO connect to servers hearing using asynchronous and then store in global diction
-# TODO hard code who connects to who
-# TODO: mother -> tommorrow and candy; tomorrow -> candy
-# # {"motherland": socket, "tomorrowland": socket, "candy": socket}
-# def connect_to_servers(servers_info):
-#
-#         a = 2
-
-#     global master_sockets
-#     master_sockets = {}
-#     for s_key in servers_info.keys():
-#         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#         try:
-#             s.connect((servers_info[s_key][0], int(servers_info[s_key][1])))
-#         except StandardError:
-#             print("not yet")
-#         print(s.recv(500))
-#         username = "Johanni27"
-#         password = "1234"
-#         send(s, "%s\r\n" % username)
-#         send(s, "%s\r\n" % password)
-#         print(s.recv(500))
-#         master_sockets[s_key] = s
-
 
 
 class Server:

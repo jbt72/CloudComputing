@@ -85,17 +85,19 @@ class Commands:
         print(command)
         c_keyword = command.split(" ")[0]
         print(c_keyword)
-        print("yup")
         if (c_keyword in self.options):
             return self.options[c_keyword](command)
         else:
             print("Unrecognized commands")
             return -1
 
-
+    # TODO Develop algorithm for which server client should connect with
+    # TODO Mixture of server workload and distance from client
+    # TODO Not about master of user, since on flikr people tend to view other
+    # TODO people's albums more than one's one
+    # TODO creae a list and history for client
     def connect_handle(self, command):
         global counter
-        print("in conn")
         if (type == 0): #random
             self.pick = random.randint(0, len(servers) - 1)
         if (type == 1): #round-robbin
@@ -103,12 +105,8 @@ class Commands:
                 counter = 0
             self.pick = counter
             counter += 1
-            print("in rr")
-            print(self.pick)
-            print("coutner")
-            print(counter)
-        self.socket.send(servers[self.pick][0] + " " + str(servers[self.pick][1]) + " \r\n")
-        print("was sent")
+        self.socket.send(servers[self.pick][0] +
+                         " " + str(servers[self.pick][1]) + " \r\n")
         return 0
 
 
@@ -204,7 +202,7 @@ def serverloop():
 
 def child_server(info):
     (hostname, portnum, db_conn_address) = info
-    s = server.Server(hostname, int(portnum), db_conn_address, servers_sockets)
+    s = server.Server(hostname, int(portnum), db_conn_address, server_addresses)
 
 
 def start_servers():
@@ -233,14 +231,12 @@ for k, v in opts:
 # initialize global variables
 max_workers = 32
 num_jobs = 0
-netID = "jbt72"
-valid_clients = {'Johanni27': '1234'}
-database = {"mykey": "Hello"}
-# [ (ip_address, port_num, db_conn_address)
+
+# [ (ip_address, port_num, db_conn_address) ]
 servers = [ ("127.0.0.1", "8769", "mongodb://Johanni27:1234@ds047207.mongolab.com:47207/motherland"),
             ("127.0.0.1", "8770", "mongodb://Johanni271:1234@ds033257.mongolab.com:33257/tomorrowland"),
             ("127.0.0.1", "8778", "mongodb://Johanni272:1234@ds043037.mongolab.com:43037/candyland")]
-servers_sockets = {"motherland": ("127.0.0.1", "8769"), "tomorrowland": ("127.0.0.1", "8770"),
+server_addresses = {"motherland": ("127.0.0.1", "8769"), "tomorrowland": ("127.0.0.1", "8770"),
                     "candyland": ("127.0.0.1", "8778")}
 
 
@@ -248,10 +244,6 @@ num_conn_lock = Lock()
 num_connections = 0
 
 print("Gateway Server coming up on %s:%i" % (host, port))
-
-
-global loop
-loop = True
 
 # Create & start the servers
 start_servers()
