@@ -452,11 +452,6 @@ class Server:
             # Server candyland accepts request by Server motherland and tomorrowland
             while self.num_server_send_conn < 2:
                 with num_conn_lock:
-                    print("trying again")
-                    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                    serversocket.bind((self.host, self.port))
-                    serversocket.listen(5)
                     print("trying to accept")
                     (otherserversocket, address) = serversocket.accept()
                     print("accepted")
@@ -563,7 +558,7 @@ class ServerConnectionHandler(Thread):
         self.db_name = db_name
         self.db = db
         self.usersdb = usersdb
-        self.server_send_sockets = server_send_sockets
+        self.server_send_sockets = server_send_sockets # only need this for command
         print("tyring to print server connection")
         print(self.server_send_sockets)
         print("finsihed tryign to print")
@@ -581,8 +576,16 @@ class ServerConnectionHandler(Thread):
         self.partitioner = "\r\n"
         print ("Before loop: unprocessed packets %s" % self.unprocessed_packets)
         while (self.unprocessed_packets.partition(self.partitioner)[1] == ""):
-            self.unprocessed_packets += self.socket.recv(500)
-            print("serverconnectionhandler unproc pack %s" % self.unprocessed_packets)
+            try:
+                print("serverconnectionhandler trying to receive")
+                print("socket %s that runs commands in db %s for server %s" % (self.socket, self.db_name,
+                                                                            self.otherSocketName))
+                print(self.socket())
+                self.unprocessed_packets += self.socket.recv(500)
+                print("recv is done bitches. Suckers")
+            except socket.error:
+                print("!!!!WAH SERVER CONNECTION SOCKET DIED TRYING TO RECEIVE")
+            print("!!!!!!serverconnectionhandler unproc pack %s" % self.unprocessed_packets)
             #print ("In loop: unprocessed packets %s" % self.unprocessed_packets)
         self.command = self.unprocessed_packets.partition(self.partitioner)[0] #\r\n is removed
         print("new command %s" % self.command)
@@ -608,7 +611,7 @@ class ClientConnectionHandler:
     def __init__(self, socket, server_send_sockets, db_name, db, usersdb):
         self.socket = socket
         self.complete = False
-        self.timeout = Timer(50.0, self.handle_timeout)
+        self.timeout = Timer(50.0, self.handle2_timeout)
         self.valid_client = False
         self.unprocessed_packets = ""
         self.command = ""
@@ -634,6 +637,14 @@ class ClientConnectionHandler:
         self.unprocessed_packets = self.unprocessed_packets.partition(self.partitioner)[2]
         print("new unprocessed packets %s" % self.unprocessed_packets)
 
+
+    def handle2_timeout(self):
+        print("in handle222 timeout")
+        if (self.complete == False):
+            self.socket.send("South Korea Server Error: timeout exceeded")
+        self.socket.close()
+        self.complete = True
+
     def handle_timeout(self):
         print("in handle timeout")
         if (self.complete == False):
@@ -643,8 +654,8 @@ class ClientConnectionHandler:
 
     def reset_timer(self):
         print("ABOUT TO TIMEOUT")
-        self.timeout = Timer(3.0, self.handle_timeout)
-        self.timeout.start()
+        self.timeout = Timer(20.0, self.handle_timeout)
+        #self.timeout.start()
 
     # checks for valid client
     def authentication_handle(self):
@@ -665,6 +676,7 @@ class ClientConnectionHandler:
                     print("was valid")
                     self.valid_client = True
                     self.timeout.cancel()
+                    print("reset timer in authentication")
                     self.reset_timer()
                     self.socket.send("+OK\r\n")
                     print("sent info")
@@ -691,6 +703,8 @@ class ClientConnectionHandler:
                 print("received input")
                 request = c.command_handle(self.command)
                 if (request == 0):
+                    print("request %s" % request)
+                    print("reset timer in handle request of client connection")
                     self.reset_timer()
                 if (request == 1): # quiting
                     self.complete = True

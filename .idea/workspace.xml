@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5f01dae9-f42c-4d05-a479-8d913eea2771" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/oldserver.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client1.py" afterPath="$PROJECT_DIR$/client1.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/load_balancer.py" afterPath="$PROJECT_DIR$/load_balancer.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.py" afterPath="$PROJECT_DIR$/server.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -29,10 +26,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="server.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="server.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="580" column="32" selection-start="24239" selection-end="24239" vertical-scroll-proportion="-12.423077" vertical-offset="8377" max-vertical-offset="10590">
+            <state line="467" column="0" selection-start="18458" selection-end="18458" vertical-scroll-proportion="0.97138554" vertical-offset="6360" max-vertical-offset="10800">
               <folding>
                 <element signature="e#26#39#0" expanded="true" />
               </folding>
@@ -43,10 +40,8 @@
       <file leaf-file-name="oldserver.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/oldserver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="108" column="63" selection-start="3328" selection-end="3335" vertical-scroll-proportion="-12.692307" vertical-offset="1290" max-vertical-offset="9195">
-              <folding>
-                <element signature="e#52#65#0" expanded="true" />
-              </folding>
+            <state line="108" column="63" selection-start="3328" selection-end="3335" vertical-scroll-proportion="0.0" vertical-offset="1290" max-vertical-offset="9195">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -54,16 +49,16 @@
       <file leaf-file-name="client1.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="51" column="0" selection-start="1712" selection-end="2033" vertical-scroll-proportion="0.0" vertical-offset="345" max-vertical-offset="1905">
+            <state line="51" column="0" selection-start="1712" selection-end="2033" vertical-scroll-proportion="0.0" vertical-offset="765" max-vertical-offset="1935">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="load_balancer.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="load_balancer.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/load_balancer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="95" column="36" selection-start="2521" selection-end="2521" vertical-scroll-proportion="0.5062696" vertical-offset="952" max-vertical-offset="3750">
+            <state line="17" column="0" selection-start="342" selection-end="342" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="3900">
               <folding />
             </state>
           </provider>
@@ -125,6 +120,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -145,7 +141,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -317,7 +312,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="929" height="774" extended-state="6" />
+    <frame x="0" y="22" width="929" height="774" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -332,12 +327,12 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -361,6 +356,36 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/server.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="585" column="90" selection-start="24598" selection-end="24604" vertical-scroll-proportion="0.0" vertical-offset="8692" max-vertical-offset="10875">
+          <folding>
+            <element signature="e#26#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/oldserver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="108" column="63" selection-start="3328" selection-end="3335" vertical-scroll-proportion="0.0" vertical-offset="1290" max-vertical-offset="9195">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="51" column="0" selection-start="1712" selection-end="2033" vertical-scroll-proportion="0.0" vertical-offset="765" max-vertical-offset="1935">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/load_balancer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="0" selection-start="342" selection-end="342" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="3900">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/server.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="425" column="38" selection-start="15953" selection-end="15967" vertical-scroll-proportion="0.0" vertical-offset="6375" max-vertical-offset="9165">
@@ -484,21 +509,10 @@
         <state line="298" column="28" selection-start="9951" selection-end="9951" vertical-scroll-proportion="0.0" vertical-offset="3982" max-vertical-offset="4650" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="580" column="32" selection-start="24239" selection-end="24239" vertical-scroll-proportion="-12.423077" vertical-offset="8377" max-vertical-offset="10590">
-          <folding>
-            <element signature="e#26#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/oldserver.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="108" column="63" selection-start="3328" selection-end="3335" vertical-scroll-proportion="-12.692307" vertical-offset="1290" max-vertical-offset="9195">
-          <folding>
-            <element signature="e#52#65#0" expanded="true" />
-          </folding>
+        <state line="108" column="63" selection-start="3328" selection-end="3335" vertical-scroll-proportion="0.0" vertical-offset="1290" max-vertical-offset="9195">
+          <folding />
         </state>
       </provider>
     </entry>
@@ -511,8 +525,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/load_balancer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="95" column="36" selection-start="2521" selection-end="2521" vertical-scroll-proportion="0.5062696" vertical-offset="952" max-vertical-offset="3750">
+        <state line="17" column="0" selection-start="342" selection-end="342" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="3900">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="467" column="0" selection-start="18458" selection-end="18458" vertical-scroll-proportion="0.97138554" vertical-offset="6360" max-vertical-offset="10800">
+          <folding>
+            <element signature="e#26#39#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
