@@ -596,6 +596,7 @@ class Server:
         global servers_info
         servers_info = server_ss
 
+
         #connect_to_servers(server_ss)
 
         print("Server coming up on %s:%i" % (host, port))

@@ -142,6 +142,10 @@ class Commands:
 
         return 0
 
+    # ===================================
+    # TODO: Update rest of command handler
+    # ===================================
+
     def create_photo_handle(self, command):
         attr = command.split("\t")
         # TODO: have an actual image here
@@ -343,6 +347,7 @@ class Server:
         # the receive sockets have their own threads in ServerConnectionHandler
         self.server_send_sockets = {}
 
+
         print("Server coming up on %s:%i" % (self.host, self.port))
 
         # Set up connection with assigned Database
@@ -452,6 +457,11 @@ class Server:
             # Server candyland accepts request by Server motherland and tomorrowland
             while self.num_server_send_conn < 2:
                 with num_conn_lock:
+                    print("trying again")
+                    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                    serversocket.bind((self.host, self.port))
+                    serversocket.listen(5)
                     print("trying to accept")
                     (otherserversocket, address) = serversocket.accept()
                     print("accepted")
@@ -577,15 +587,15 @@ class ServerConnectionHandler(Thread):
         print ("Before loop: unprocessed packets %s" % self.unprocessed_packets)
         while (self.unprocessed_packets.partition(self.partitioner)[1] == ""):
             try:
-                print("serverconnectionhandler trying to receive")
-                print("socket %s that runs commands in db %s for server %s" % (self.socket, self.db_name,
-                                                                            self.otherSocketName))
-                print(self.socket())
+                #print("serverconnectionhandler trying to receive")
+                #print("socket %s that runs commands in db %s for server %s" % (self.socket, self.db_name,
+                                                                          #  self.otherSocketName))
+
                 self.unprocessed_packets += self.socket.recv(500)
-                print("recv is done bitches. Suckers")
+                #print("recv is done.")
             except socket.error:
                 print("!!!!WAH SERVER CONNECTION SOCKET DIED TRYING TO RECEIVE")
-            print("!!!!!!serverconnectionhandler unproc pack %s" % self.unprocessed_packets)
+            #print("!!!!!!serverconnectionhandler unproc pack %s" % self.unprocessed_packets)
             #print ("In loop: unprocessed packets %s" % self.unprocessed_packets)
         self.command = self.unprocessed_packets.partition(self.partitioner)[0] #\r\n is removed
         print("new command %s" % self.command)
@@ -623,7 +633,7 @@ class ClientConnectionHandler:
         print("trying to print")
         print(self.server_send_sockets)
         print("finished printing")
-        print(self.server_send_sockets["candyland"])
+        #print(self.server_send_sockets["candyland"])
         print("3successfully accesed dicti!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
     def collect_input(self):

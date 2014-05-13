@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5f01dae9-f42c-4d05-a479-8d913eea2771" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/load_balancer.py" afterPath="$PROJECT_DIR$/load_balancer.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/oldserver.py" afterPath="$PROJECT_DIR$/oldserver.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.py" afterPath="$PROJECT_DIR$/server.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="CloudComputing.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -26,10 +27,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="server.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="server.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="467" column="0" selection-start="18458" selection-end="18458" vertical-scroll-proportion="0.97138554" vertical-offset="6360" max-vertical-offset="10800">
+            <state line="637" column="0" selection-start="26785" selection-end="26785" vertical-scroll-proportion="-5.5" vertical-offset="9412" max-vertical-offset="10950">
               <folding>
                 <element signature="e#26#39#0" expanded="true" />
               </folding>
@@ -37,19 +38,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="oldserver.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/oldserver.py">
+      <file leaf-file-name="client1.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="108" column="63" selection-start="3328" selection-end="3335" vertical-scroll-proportion="0.0" vertical-offset="1290" max-vertical-offset="9195">
+            <state line="51" column="41" selection-start="1753" selection-end="1753" vertical-scroll-proportion="0.0" vertical-offset="611" max-vertical-offset="1905">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="client1.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client1.py">
+      <file leaf-file-name="lruCache.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/lruCache.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="51" column="0" selection-start="1712" selection-end="2033" vertical-scroll-proportion="0.0" vertical-offset="765" max-vertical-offset="1935">
+            <state line="194" column="36" selection-start="6451" selection-end="6481" vertical-scroll-proportion="0.5421687" vertical-offset="2550" max-vertical-offset="4650">
               <folding />
             </state>
           </provider>
@@ -58,7 +59,7 @@
       <file leaf-file-name="load_balancer.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/load_balancer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="0" selection-start="342" selection-end="342" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="3900">
+            <state line="262" column="0" selection-start="8196" selection-end="8196" vertical-scroll-proportion="0.0" vertical-offset="2951" max-vertical-offset="3885">
               <folding />
             </state>
           </provider>
@@ -81,17 +82,18 @@
         <option value="$PROJECT_DIR$/caliServerReplica.py" />
         <option value="$PROJECT_DIR$/caliServer.py" />
         <option value="$PROJECT_DIR$/lruCache" />
-        <option value="$PROJECT_DIR$/lruCache.py" />
+        <option value="$PROJECT_DIR$/client1.py" />
         <option value="$PROJECT_DIR$/oldserver.py" />
         <option value="$PROJECT_DIR$/load_balancer.py" />
-        <option value="$PROJECT_DIR$/client1.py" />
         <option value="$PROJECT_DIR$/server.py" />
+        <option value="$PROJECT_DIR$/lruCache.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
+    <option name="x" value="698" />
     <option name="y" value="22" />
-    <option name="width" value="929" />
+    <option name="width" value="643" />
     <option name="height" value="774" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
@@ -312,14 +314,14 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="929" height="774" extended-state="0" />
+    <frame x="698" y="22" width="643" height="774" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18191604" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2628305" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -504,38 +506,40 @@
         <state line="244" column="0" selection-start="7555" selection-end="7555" vertical-scroll-proportion="0.0" vertical-offset="3297" max-vertical-offset="3975" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lruCache.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="298" column="28" selection-start="9951" selection-end="9951" vertical-scroll-proportion="0.0" vertical-offset="3982" max-vertical-offset="4650" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/oldserver.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="108" column="63" selection-start="3328" selection-end="3335" vertical-scroll-proportion="0.0" vertical-offset="1290" max-vertical-offset="9195">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client1.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="0" selection-start="1712" selection-end="2033" vertical-scroll-proportion="0.0" vertical-offset="345" max-vertical-offset="1905">
+        <state line="597" column="8" selection-start="21861" selection-end="21861" vertical-scroll-proportion="0.6385542" vertical-offset="8351" max-vertical-offset="9030">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/load_balancer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="0" selection-start="342" selection-end="342" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="3900">
+        <state line="262" column="0" selection-start="8196" selection-end="8196" vertical-scroll-proportion="0.0" vertical-offset="3221" max-vertical-offset="3885">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="467" column="0" selection-start="18458" selection-end="18458" vertical-scroll-proportion="0.97138554" vertical-offset="6360" max-vertical-offset="10800">
+        <state line="637" column="0" selection-start="26785" selection-end="26785" vertical-scroll-proportion="-5.5" vertical-offset="9412" max-vertical-offset="10950">
           <folding>
             <element signature="e#26#39#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="51" column="41" selection-start="1753" selection-end="1753" vertical-scroll-proportion="0.0" vertical-offset="611" max-vertical-offset="1905">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lruCache.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="194" column="36" selection-start="6451" selection-end="6481" vertical-scroll-proportion="0.5421687" vertical-offset="2550" max-vertical-offset="4650">
+          <folding />
         </state>
       </provider>
     </entry>

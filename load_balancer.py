@@ -206,7 +206,13 @@ def child_server(info):
 
 
 def start_servers():
+    # Start Server
     for server in servers:
+        newpid = os.fork()
+        if newpid == 0:
+            child_server(server)
+    # Start Slaves
+    for server in server_slaves:
         newpid = os.fork()
         if newpid == 0:
             child_server(server)
@@ -238,6 +244,9 @@ servers = [ ("127.0.0.1", "8769", "mongodb://Johanni27:1234@ds047207.mongolab.co
             ("127.0.0.1", "8778", "mongodb://Johanni272:1234@ds043037.mongolab.com:43037/candyland")]
 server_addresses = {"motherland": ("127.0.0.1", "8769"), "tomorrowland": ("127.0.0.1", "8770"),
                     "candyland": ("127.0.0.1", "8778")}
+server_slaves = [ ("127.0.0.1", "8790", "mongodb://Johanni27:1234@ds047207.mongolab.com:47207/motherland"),
+            ("127.0.0.1", "8791", "mongodb://Johanni271:1234@ds033257.mongolab.com:33257/tomorrowland"),
+            ("127.0.0.1", "8792", "mongodb://Johanni272:1234@ds043037.mongolab.com:43037/candyland")]
 
 
 num_conn_lock = Lock()
